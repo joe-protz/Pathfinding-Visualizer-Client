@@ -11,7 +11,8 @@ import ChangePassword from '../ChangePassword/ChangePassword'
 
 // ------------------------------------
 import Home from '../Home/Home'
-import Grid from '../Grid/Grid'
+import SavedGrid from '../SavedGrid/SavedGrid'
+import NewGrid from '../NewGrid/NewGrid'
 // ------------------------------------
 
 class App extends Component {
@@ -90,7 +91,15 @@ class App extends Component {
             user={user}
             path="/grids/:id"
             render={({ match }) => (
-              <Grid msgAlert={this.msgAlert} match={match} user={user} />
+              <SavedGrid msgAlert={this.msgAlert} match={match} user={user} />
+            )}
+          />
+          {/* CREATE Grid */}
+          <AuthenticatedRoute
+            user={user}
+            path="/new_grid"
+            render={({ match }) => (
+              <NewGrid msgAlert={this.msgAlert} match={match} user={user} />
             )}
           />
         </main>

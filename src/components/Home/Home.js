@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, withRouter } from 'react-router-dom'
 // ---------------
 import axios from 'axios'
 // ---------------
@@ -44,10 +44,15 @@ class Home extends Component {
     return (
       <div>
         {this.props.user && <h4>All Grids</h4>}
+        {this.props.user && (
+          <Link to={'/new_grid'}>
+            <button >New Grid</button>
+          </Link>
+        )}
         <ul>{gridsHtml}</ul>
       </div>
     )
   }
 }
 
-export default Home
+export default withRouter(Home)

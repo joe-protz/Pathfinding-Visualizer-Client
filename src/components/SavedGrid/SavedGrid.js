@@ -1,18 +1,18 @@
 import React, { Component } from 'react'
 import Sketch from 'react-p5'
 // -----------Cell Class
-import Cell from './Cell'
+import Cell from '../Shared/Cell'
 // -----------Libraries
 import axios from 'axios'
 // -----------API URL
 import apiUrl from '../../apiConfig'
 
-export default class Grid extends Component {
+export default class SavedGrid extends Component {
   constructor () {
     super()
     this.state = {
       found: false,
-      created: false
+      owned: false
     }
   }
   cells
@@ -20,10 +20,12 @@ export default class Grid extends Component {
   cellTest
   rows
   changed = false
+  scale = 20
   // TODO: Make breakpoints to have this be responsive on mobile:
   // scale down and also make the canvas resize if the window is under a certain width
-  scale = 20
+
   componentDidMount () {
+    // get the grid by id
     axios({
       url: apiUrl + '/grids/' + this.props.match.params.id,
       method: 'GET',
@@ -32,15 +34,18 @@ export default class Grid extends Component {
       }
     })
       .then(res => {
-        console.log(res.data.grid.walls)
         this.cells = res.data.grid.walls
-        this.setState({ found: true })
+        this.setState({ found: true,
+          owned: res.data.grid.editable
+        })
       })
       .catch(console.error)
   }
+  // set up the canvas
   setup = (p5, canvasParentRef) => {
     // create canvas
     const myP5 = p5
+    // canvas is 600x500px
     p5.createCanvas(600, 500).parent(
       canvasParentRef
     ) // use parent to render canvas in this ref (without that p5 render this canvas outside your component)
@@ -89,15 +94,15 @@ export default class Grid extends Component {
     const map = this.cells.map(row => row.map(cell => cell.wall))
     axios({
       url: `${apiUrl}/grids`,
-      method: 'POST',
+      method: 'PATCH',
       data: { grid: { walls: map } },
       headers: {
         Authorization: `Bearer ${this.props.user.token}`
       }
     })
       .then(res => {
-        console.log(res.data.grid)
-        this.setState({ created: true, gridId: res.data.grid._id })
+        console.log('yay :)')
+        // this.setState({ created: true, gridId: res.data.grid._id })
       })
       .catch(console.error)
   }
@@ -108,7 +113,7 @@ export default class Grid extends Component {
           setup={this.setup}
           draw={this.draw}
         />
-        <button onClick={this.saveGrid}>save</button>
+        {this.state.owned && <button onClick={this.saveGrid}>Save Changes</button>}
       </div>
     )
   }
