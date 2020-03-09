@@ -89,8 +89,8 @@ class App extends Component {
           <AuthenticatedRoute
             user={user}
             path="/grids/:id"
-            render={() => (
-              <Grid msgAlert={this.msgAlert} user={user} />
+            render={({ match }) => (
+              <Grid msgAlert={this.msgAlert} match={match} user={user} />
             )}
           />
         </main>

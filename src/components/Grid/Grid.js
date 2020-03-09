@@ -1,24 +1,42 @@
 import React, { Component } from 'react'
 import Sketch from 'react-p5'
+// -----------Cell Class
 import Cell from './Cell'
+// -----------Libraries
+import axios from 'axios'
+// -----------API URL
+import apiUrl from '../../apiConfig'
 
 export default class Grid extends Component {
   constructor () {
     super()
     this.state = {
-
+      found: false,
+      created: false
     }
   }
   cells
   cols
   cellTest
   rows
+  changed = false
   // TODO: Make breakpoints to have this be responsive on mobile:
   // scale down and also make the canvas resize if the window is under a certain width
   scale = 20
   componentDidMount () {
-    this.setState({
+    axios({
+      url: apiUrl + '/grids/' + this.props.match.params.id,
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${this.props.user.token}`
+      }
     })
+      .then(res => {
+        console.log(res.data.grid.walls)
+        this.cells = res.data.grid.walls
+        this.setState({ found: true })
+      })
+      .catch(console.error)
   }
   setup = (p5, canvasParentRef) => {
     // create canvas
@@ -28,6 +46,7 @@ export default class Grid extends Component {
     ) // use parent to render canvas in this ref (without that p5 render this canvas outside your component)
     this.cols = Math.ceil(p5.width / this.scale)
     this.rows = Math.ceil(p5.height / this.scale)
+
     this.cells = new Array(this.cols)
     for (let i = 0; i < this.cells.length; i++) {
       this.cells[i] = new Array(this.rows)
@@ -40,6 +59,15 @@ export default class Grid extends Component {
   }
 
   draw = p5 => {
+    if (!this.changed && this.state.found) {
+      const myP5 = p5
+      this.changed = true
+      for (let i = 0; i < this.cells.length; i++) {
+        for (let j = 0; j < this.cells[i].length; j++) {
+          this.cells[i][j] = new Cell(i, j, this.scale, myP5, this.cells[i][j])
+        }
+      }
+    }
     p5.background(0)
     if (p5.mouseIsPressed) {
       const mouseX = p5.mouseX
@@ -57,21 +85,31 @@ export default class Grid extends Component {
     }
     // NOTE: Do not use setState in draw function or in functions that is executed in draw function... pls use normal variables or class properties for this purposes
   }
-
-  // mouseDragged = () => {
-  //   for (let i = 0; i < this.cells.length; i++) {
-  //     for (let j = 0; j < this.cells[i].length; j++) {
-  //       this.cells[i][j].click()
-  //     }
-  //   }
-  // }
+  saveGrid = (event) => {
+    const map = this.cells.map(row => row.map(cell => cell.wall))
+    axios({
+      url: `${apiUrl}/grids`,
+      method: 'POST',
+      data: { grid: { walls: map } },
+      headers: {
+        Authorization: `Bearer ${this.props.user.token}`
+      }
+    })
+      .then(res => {
+        console.log(res.data.grid)
+        this.setState({ created: true, gridId: res.data.grid._id })
+      })
+      .catch(console.error)
+  }
   render () {
     return (
-      <Sketch
-        setup={this.setup}
-        draw={this.draw}
-        mouseDragged={this.mouseDragged}
-      />
+      <div>
+        <Sketch
+          setup={this.setup}
+          draw={this.draw}
+        />
+        <button onClick={this.saveGrid}>save</button>
+      </div>
     )
   }
 }
