@@ -34,6 +34,7 @@ export default class SavedGrid extends Component {
       }
     })
       .then(res => {
+        console.log(res.data.grid)
         this.cells = res.data.grid.walls
         this.setState({ found: true,
           owned: res.data.grid.editable
@@ -93,7 +94,7 @@ export default class SavedGrid extends Component {
   saveGrid = (event) => {
     const map = this.cells.map(row => row.map(cell => cell.wall))
     axios({
-      url: `${apiUrl}/grids`,
+      url: `${apiUrl}/grids/` + this.props.match.params.id,
       method: 'PATCH',
       data: { grid: { walls: map } },
       headers: {

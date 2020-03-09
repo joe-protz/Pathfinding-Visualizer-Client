@@ -7,7 +7,7 @@ import messages from '../AutoDismissAlert/messages'
 class SignOut extends Component {
   componentDidMount () {
     const { msgAlert, history, clearUser, user } = this.props
-
+    clearUser()
     signOut(user)
       .finally(() => msgAlert({
         heading: 'Signed Out Successfully',
@@ -15,7 +15,6 @@ class SignOut extends Component {
         variant: 'success'
       }))
       .finally(() => history.push('/'))
-      .finally(() => clearUser())
   }
 
   render () {

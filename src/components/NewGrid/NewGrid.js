@@ -7,12 +7,17 @@ import Cell from '../Shared/Cell'
 import axios from 'axios'
 // -----------API URL
 import apiUrl from '../../apiConfig'
+// -----------Update/Create Form
+import GridForm from '../Shared/GridForm'
 
 export default class NewGrid extends Component {
   constructor () {
     super()
     this.state = {
-      saved: false
+      saved: false,
+      grid: {
+        name: ''
+      }
     }
   }
   cells
@@ -24,6 +29,15 @@ export default class NewGrid extends Component {
   // TODO: Make breakpoints to have this be responsive on mobile:
   // scale down and also make the canvas resize if the window is under a certain width
 
+handleChange = (event) => {
+  const { name, value } = event.target
+  const updatedField = {
+    [name]: value
+  }
+  const editedGrid = Object.assign(this.state.grid, updatedField)
+  this.setState({ grid: editedGrid })
+}
+
   // set up the canvas
   setup = (p5, canvasParentRef) => {
     // create canvas
@@ -33,6 +47,7 @@ export default class NewGrid extends Component {
     this.cols = Math.ceil(p5.width / this.scale)
     this.rows = Math.ceil(p5.height / this.scale)
 
+    // make a new 2d Array of cells, all set to not be walls
     this.cells = new Array(this.cols)
     for (let i = 0; i < this.cells.length; i++) {
       this.cells[i] = new Array(this.rows)
@@ -46,6 +61,7 @@ export default class NewGrid extends Component {
 
   draw = p5 => {
     p5.background(0)
+    // how we set the cells to be walls
     if (p5.mouseIsPressed) {
       const mouseX = p5.mouseX
       const mouseY = p5.mouseY
@@ -55,6 +71,7 @@ export default class NewGrid extends Component {
         }
       }
     }
+    // continual loop to show all cells based on their state
     for (let i = 0; i < this.cells.length; i++) {
       for (let j = 0; j < this.cells[i].length; j++) {
         this.cells[i][j].show()
@@ -62,29 +79,45 @@ export default class NewGrid extends Component {
     }
     // NOTE: Do not use setState in draw function or in functions that is executed in draw function... pls use normal variables or class properties for this purposes
   }
+  // event handler to save the grid to the user's grids collection
   saveGrid = event => {
-    const map = this.cells.map(row => row.map(cell => cell.wall))
+    event.preventDefault()
+    const name = this.state.grid.name
+    const map = this.cells.map(row =>
+      row.map(cell => cell.wall)
+    )
     axios({
       url: `${apiUrl}/grids`,
       method: 'POST',
-      data: { grid: { walls: map } },
+      data: { grid: { walls: map, name: name } },
       headers: {
         Authorization: `Bearer ${this.props.user.token}`
       }
     })
       .then(res => {
-        this.setState({ saved: true, gridId: res.data.grid._id })
+        // with state set to saved the render function will route to show/${this}
+        this.setState({
+          saved: true,
+          gridId: res.data.grid._id
+        })
       })
       .catch(console.error)
   }
+
   render () {
+    //  redirect if grid has been saved to db
     if (this.state.saved) {
       return (<Redirect to={{ pathname: '/grids/' + this.state.gridId }}/>)
     }
+    // the sketch component making the canvas is rendered here
     return (
       <div>
+        <GridForm
+          grid={this.state.grid}
+          handleChange={this.handleChange}
+          handleSubmit={this.saveGrid}
+        />
         <Sketch setup={this.setup} draw={this.draw} />
-        <button onClick={this.saveGrid}>save</button>
       </div>
     )
   }
