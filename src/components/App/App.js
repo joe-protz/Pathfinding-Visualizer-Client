@@ -11,6 +11,7 @@ import ChangePassword from '../ChangePassword/ChangePassword'
 
 // ------------------------------------
 import Home from '../Home/Home'
+import Grid from '../Grid/Grid'
 // ------------------------------------
 
 class App extends Component {
@@ -78,10 +79,19 @@ class App extends Component {
             )}
           />
           {/* Grid Routes-------------------------------- */}
+          {/* Home Route handles both unauth and auth */}
           <Route
             exact
             path="/"
             render={() => <Home msgAlert={this.msgAlert} user={user} />}
+          />
+          {/* SHOW Grid */}
+          <AuthenticatedRoute
+            user={user}
+            path="/grids/:id"
+            render={() => (
+              <Grid msgAlert={this.msgAlert} user={user} />
+            )}
           />
         </main>
       </Fragment>
