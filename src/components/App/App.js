@@ -9,6 +9,12 @@ import SignIn from '../SignIn/SignIn'
 import SignOut from '../SignOut/SignOut'
 import ChangePassword from '../ChangePassword/ChangePassword'
 
+// ------------------------------------
+import Home from '../Home/Home'
+import SavedGrid from '../SavedGrid/SavedGrid'
+import NewGrid from '../NewGrid/NewGrid'
+// ------------------------------------
+
 class App extends Component {
   constructor () {
     super()
@@ -42,18 +48,60 @@ class App extends Component {
           />
         ))}
         <main className="container">
-          <Route path='/sign-up' render={() => (
-            <SignUp msgAlert={this.msgAlert} setUser={this.setUser} />
-          )} />
-          <Route path='/sign-in' render={() => (
-            <SignIn msgAlert={this.msgAlert} setUser={this.setUser} />
-          )} />
-          <AuthenticatedRoute user={user} path='/sign-out' render={() => (
-            <SignOut msgAlert={this.msgAlert} clearUser={this.clearUser} user={user} />
-          )} />
-          <AuthenticatedRoute user={user} path='/change-password' render={() => (
-            <ChangePassword msgAlert={this.msgAlert} user={user} />
-          )} />
+          {/* Auth Routes-------------------------------- */}
+          <Route
+            path="/sign-up"
+            render={() => (
+              <SignUp msgAlert={this.msgAlert} setUser={this.setUser} />
+            )}
+          />
+          <Route
+            path="/sign-in"
+            render={() => (
+              <SignIn msgAlert={this.msgAlert} setUser={this.setUser} />
+            )}
+          />
+          <AuthenticatedRoute
+            user={user}
+            path="/sign-out"
+            render={() => (
+              <SignOut
+                msgAlert={this.msgAlert}
+                clearUser={this.clearUser}
+                user={user}
+              />
+            )}
+          />
+          <AuthenticatedRoute
+            user={user}
+            path="/change-password"
+            render={() => (
+              <ChangePassword msgAlert={this.msgAlert} user={user} />
+            )}
+          />
+          {/* Grid Routes-------------------------------- */}
+          {/* Home Route handles both unauth and auth */}
+          <Route
+            exact
+            path="/"
+            render={() => <Home msgAlert={this.msgAlert} user={user} />}
+          />
+          {/* SHOW Grid */}
+          <AuthenticatedRoute
+            user={user}
+            path="/grids/:id"
+            render={({ match }) => (
+              <SavedGrid msgAlert={this.msgAlert} match={match} user={user} />
+            )}
+          />
+          {/* CREATE Grid */}
+          <AuthenticatedRoute
+            user={user}
+            path="/new_grid"
+            render={({ match }) => (
+              <NewGrid msgAlert={this.msgAlert} match={match} user={user} />
+            )}
+          />
         </main>
       </Fragment>
     )
