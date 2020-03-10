@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import Sketch from 'react-p5'
+import { withRouter } from 'react-router-dom'
 // -----------Cell Class
 import Cell from '../Shared/Cell'
 // -----------Libraries
@@ -9,15 +10,18 @@ import apiUrl from '../../apiConfig'
 // -----------GridForm
 import GridForm from '../Shared/GridForm'
 
-export default class SavedGrid extends Component {
+class SavedGrid extends Component {
   constructor () {
     super()
     this.state = {
       found: false,
       owned: false,
-      updated: false
+      updated: false,
+      deleted: false
     }
   }
+  // variables are initialized outside of the constructor if they're used with sketch
+hasntBeenWarned = true
 cells
 cols
 cellTest
@@ -36,7 +40,10 @@ componentDidMount () {
     }
   })
     .then(res => {
+      // set cells to the res data
       this.cells = res.data.grid.walls
+
+      // sets this components state using res data
       this.setState({
         found: true,
         owned: res.data.grid.editable,
@@ -46,7 +53,7 @@ componentDidMount () {
     })
     .catch(console.error)
 }
-
+// used to alter state and the form's values
 handleChange = event => {
   const { name, value } = event.target
   const updatedField = {
@@ -88,6 +95,7 @@ draw = p5 => {
     }
   }
   p5.background(0)
+  // allows the user to set cells to 'walls' on click/drag
   if (p5.mouseIsPressed) {
     const mouseX = p5.mouseX
     const mouseY = p5.mouseY
@@ -97,6 +105,7 @@ draw = p5 => {
       }
     }
   }
+  // show all cells
   for (let i = 0; i < this.cells.length; i++) {
     for (let j = 0; j < this.cells[i].length; j++) {
       this.cells[i][j].show()
@@ -104,6 +113,8 @@ draw = p5 => {
   }
   // NOTE: Do not use setState in draw function or in functions that is executed in draw function... pls use normal variables or class properties for this purposes
 }
+
+// event handler to update grid's name and walls
 updateGrid = event => {
   event.preventDefault()
   const name = this.state.grid.name
@@ -131,7 +142,31 @@ updateGrid = event => {
       })
     })
 }
+// delete grid if user has already been warned, redirect to home
+deleteGrid =() => {
+  if (this.hasntBeenWarned) {
+    this.hasntBeenWarned = false
+    this.props.msgAlert({
+      heading: 'Warning!!',
+      message:
+      'You are about to delete your grid. This is permanent!',
+      variant: 'danger'
+    })
+  } else {
+    axios({
+      url: `${apiUrl}/grids/` + this.props.match.params.id,
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${this.props.user.token}`
+      }
+    })
+      .then(() => this.setState({ deleted: true }))
+      .catch(console.error)
+  }
+}
+
 render () {
+  if (this.state.deleted) { this.props.history.push('/') }
   if (this.state.found) {
     return (
       <div>
@@ -142,6 +177,7 @@ render () {
             handleSubmit={this.updateGrid}
           />
         )}
+        {this.state.owned && <button onClick={this.deleteGrid}>Delete Your Beautiful Creation</button>}
         <Sketch setup={this.setup} draw={this.draw} />
       </div>
     )
@@ -150,3 +186,4 @@ render () {
   }
 }
 }
+export default withRouter(SavedGrid)
