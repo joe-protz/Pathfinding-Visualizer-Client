@@ -24,9 +24,6 @@ class SavedGrid extends Component {
   // variables are initialized outside of the constructor if they're used with sketch
 hasntBeenWarned = true
 cells
-cols
-cellTest
-rows
 scale = 20
 // TODO: Make breakpoints to have this be responsive on mobile:
 // scale down and also make the canvas resize if the window is under a certain width
@@ -72,8 +69,6 @@ setup = (p5, canvasParentRef) => {
   // create canvas
   // canvas is 600x500px
   p5.createCanvas(600, 500).parent(canvasParentRef) // use parent to render canvas in this ref (without that p5 render this canvas outside your component)
-  this.cols = Math.ceil(p5.width / this.scale)
-  this.rows = Math.ceil(p5.height / this.scale)
 }
 
 draw = p5 => {
@@ -85,12 +80,8 @@ draw = p5 => {
     this.updated = true
     for (let i = 0; i < this.cells.length; i++) {
       for (let j = 0; j < this.cells[i].length; j++) {
-        this.cells[i][j] = new Cell(
-          i,
-          j,
-          this.scale,
-          myP5,
-          this.cells[i][j]
+        this.cells[i][j] =
+        new Cell(i, j, this.scale, myP5, this.cells[i][j]
         )
       }
     }
@@ -145,9 +136,11 @@ updateGrid = event => {
 }
 // delete grid if user has already been warned, redirect to home
 deleteGrid =() => {
+  const { props } = this
+  const { msgAlert, match, user } = props
   if (this.hasntBeenWarned) {
     this.hasntBeenWarned = false
-    this.props.msgAlert({
+    msgAlert({
       heading: 'Warning!!',
       message:
       'You are about to delete your grid. This is permanent!',
@@ -155,10 +148,10 @@ deleteGrid =() => {
     })
   } else {
     axios({
-      url: `${apiUrl}/grids/` + this.props.match.params.id,
+      url: `${apiUrl}/grids/` + match.params.id,
       method: 'DELETE',
       headers: {
-        Authorization: `Bearer ${this.props.user.token}`
+        Authorization: `Bearer ${user.token}`
       }
     })
       .then(() => this.setState({ deleted: true }))
@@ -167,19 +160,21 @@ deleteGrid =() => {
 }
 
 render () {
-  if (this.state.deleted) { this.props.history.push('/') }
-  if (this.state.found) {
+  const { deleted, found, grid, owned } = this.state
+  const { history } = this.props
+  if (deleted) { history.push('/') }
+  if (found) {
     return (
       <div>
         <ResetButton cells={this.cells}/>
-        {this.state.owned && (
+        {owned && (
           <GridForm
-            grid={this.state.grid}
+            grid={grid}
             handleChange={this.handleChange}
             handleSubmit={this.updateGrid}
           />
         )}
-        {this.state.owned && <button onClick={this.deleteGrid}>Delete Your Beautiful Creation</button>}
+        {owned && <button onClick={this.deleteGrid}>Delete Your Beautiful Creation</button>}
         <Sketch setup={this.setup} draw={this.draw} />
       </div>
     )
