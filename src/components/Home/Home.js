@@ -13,7 +13,6 @@ class Home extends Component {
   }
   // Only do the axios req if user is signed in-------------
   componentDidMount () {
-    console.log(this.props.user)
     if (this.props.user) {
       axios({
         url: `${apiUrl}/grids`,
