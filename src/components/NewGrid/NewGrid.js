@@ -1,8 +1,9 @@
 import React, { Component } from 'react'
 import { Redirect } from 'react-router-dom'
 import Sketch from 'react-p5'
-// -----------Cell Class
+// -----------Shared
 import Cell from '../Shared/Cell'
+import ResetButton from '../Shared/ResetButton'
 // -----------Libraries
 import axios from 'axios'
 // -----------API URL
@@ -14,6 +15,7 @@ export default class NewGrid extends Component {
   constructor () {
     super()
     this.state = {
+      initiated: false,
       saved: false,
       grid: {
         name: ''
@@ -57,6 +59,7 @@ handleChange = (event) => {
         this.cells[i][j] = new Cell(i, j, this.scale, myP5)
       }
     }
+    this.setState({ initiated: true })
   }
 
   draw = p5 => {
@@ -117,6 +120,7 @@ handleChange = (event) => {
           handleChange={this.handleChange}
           handleSubmit={this.saveGrid}
         />
+        <ResetButton cells={this.cells}/>
         <Sketch setup={this.setup} draw={this.draw} />
       </div>
     )

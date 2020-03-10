@@ -28,4 +28,7 @@ export default class Cell {
       setTimeout(() => { this.recentlyClicked = false }, 1000)
     }
   }
+  reset = () => {
+    this.wall = false
+  }
 }

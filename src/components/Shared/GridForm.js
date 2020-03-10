@@ -8,7 +8,7 @@ const GridForm = ({ grid, handleChange, handleSubmit }) => (
       value={grid.name}
       onChange={handleChange}
     />
-    <button type="submit">Submit</button>
+    <button type="submit">Save</button>
   </form>
 )
 export default GridForm
