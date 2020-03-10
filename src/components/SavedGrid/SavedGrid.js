@@ -1,8 +1,9 @@
 import React, { Component } from 'react'
 import Sketch from 'react-p5'
 import { withRouter } from 'react-router-dom'
-// -----------Cell Class
+// -----------Shared
 import Cell from '../Shared/Cell'
+import ResetButton from '../Shared/ResetButton'
 // -----------Libraries
 import axios from 'axios'
 // -----------API URL
@@ -170,6 +171,7 @@ render () {
   if (this.state.found) {
     return (
       <div>
+        <ResetButton cells={this.cells}/>
         {this.state.owned && (
           <GridForm
             grid={this.state.grid}
