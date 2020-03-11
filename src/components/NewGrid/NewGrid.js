@@ -25,6 +25,7 @@ export default class NewGrid extends Component {
       algorithm: null
     }
   }
+  p5
   start
   path = []
   end
@@ -35,7 +36,7 @@ export default class NewGrid extends Component {
   scale = 20
   // TODO: Make breakpoints to have this be responsive on mobile:
   // scale down and also make the canvas resize if the window is under a certain width
-  // ------------------------------------------------
+  // Initialize end ------------------------------------------------
   handleChange = (event) => {
     const { name, value } = event.target
     const { grid } = this.state
@@ -69,8 +70,8 @@ export default class NewGrid extends Component {
       })
       .catch(console.error)
   }
-  convertAStar = () => {
-    // this.cells = convertCells(this.cells, 'A*')
+  // initiate and allow A* to run in 'draw'
+  beginAStar = () => {
     this.setStartAndEnd()
     this.findAllNeighbors()
     this.openSet = []
@@ -79,22 +80,26 @@ export default class NewGrid extends Component {
     this.start.open = true
     this.setState({ algorithm: 'A*' })
   }
-
+  // sets one cell to start and one cell to end the path
   setStartAndEnd= () => {
     this.start = this.cells[0][0]
     this.end = this.cells[this.cols - 1][12]
     this.start.start = true
     this.end.end = true
   }
+
+  // loop through all cells and run findNeighbors()
 findAllNeighbors = () => {
   this.cells.forEach(rowOfCells =>
     rowOfCells.forEach(cell => cell.findNeighbors(this.cells, this.cols, this.rows))
   )
 }
+  // used for A*, approximation of dist between cell and end
   heuristic = (a, b, p5) => {
     // return p5.dist(a.x, a.y, b.x, b.y)
     return Math.abs(a.i - b.i) + Math.abs(a.j - b.j)
   }
+
   removeFromArray = (arr, elt) => {
     // loops through backwards so that the removal does not cause a
     // skipped item
@@ -102,13 +107,33 @@ findAllNeighbors = () => {
       if (arr[i] === elt) arr.splice(i, 1)
     }
   }
-  // -------------------------------------------------
+  // if algorithm hasnt started check grid for mouse press and change cells
+  // to walls if clicked
+  checkForClicks = (p5) => {
+    if (p5.mouseIsPressed && !this.state.algorithm) {
+      const mouseX = p5.mouseX
+      const mouseY = p5.mouseY
+      for (let i = 0; i < this.cols; i++) {
+        for (let j = 0; j < this.rows; j++) {
+          this.cells[i][j].click(mouseX, mouseY)
+        }
+      }
+    }
+  }
+
+  // reset Algorithm and continue loop
+  resetBoard = () => {
+    this.path = []
+    this.setState({ algorithm: null })
+  }
+  // Data manipulation end-------------------------------------------------
 
   // set up the canvas
   setup = (p5, canvasParentRef) => {
     let { cols, rows } = this
     const { scale } = this
     // create canvas
+    this.p5 = p5
     const myP5 = p5
     // canvas is 600x500px
     p5.createCanvas(600, 500).parent(canvasParentRef) // use parent to render canvas in this ref (without that p5 render this canvas outside your component)
@@ -130,50 +155,63 @@ findAllNeighbors = () => {
   }
 
   draw = p5 => {
-    const { openSet, end } = this
+    p5.background(0)
+
+    this.checkForClicks(p5)
+    const { openSet, closedSet, end } = this
     const { algorithm } = this.state
     // while the algo is A* and there are still cells in openSet
     if (algorithm === 'A*') {
       if (openSet.length > 0) {
         let winner = 0
-        // find the lowest score in the openSet
+        // find the lowest score in the openSet (closest cell to end)
         for (let i = 0; i < openSet.length; i++) {
           if (openSet[i].f < openSet[winner].f) winner = i
         }
-        console.log(winner)
+
         this.current = openSet[winner]
         const { current } = this
         // if we found the solution...
         if (current === end) {
           console.log('done!')
-          p5.noLoop()
         } else {
-          this.removeFromArray(this.openSet, this.current)
+        // Remove from open set and add to closed, setting attr for visuals
+          this.removeFromArray(openSet, current)
           current.open = false
 
-          this.closedSet.push(this.current)
+          closedSet.push(current)
           current.closed = true
-
-          const neighbors = this.current.neighbors
-          neighbors.forEach((neighbor, i) => {
-            if (!this.closedSet.includes(neighbors[i])) {
+          // find al the neighbors of the closest cell
+          const neighbors = current.neighbors
+          // loop through neighbors
+          neighbors.forEach((neighbor) => {
+          // if it is in the closed set, skip it, it's already been calculated
+            if (!closedSet.includes(neighbor) && !neighbor.wall) {
+              // if not, the tentative g score for that neighbor is current+1
               const tempG = current.g + 1
-              if (this.openSet.includes(neighbors[i])) {
-                if (tempG < neighbor.g) { neighbors[i].g = tempG }
+              // if it's in the open set, check if the new g is better
+              // if so , set it
+              if (openSet.includes(neighbor)) {
+                if (tempG < neighbor.g) { neighbor.g = tempG }
+              // if not in open set, just set it's g score without the check, and push into open set
               } else {
-                neighbors[i].g = tempG
-                this.openSet.push(neighbors[i])
-                neighbors[i].open = true
+                neighbor.g = tempG
+                openSet.push(neighbor)
+                neighbor.open = true
               }
-              neighbors[i].h = this.heuristic(neighbors[i], this.end, p5)
-              neighbors[i].f = neighbors[i].g + neighbors[i].h
-              neighbors[i].previous = current
+              // no matter what, find the new best heuristic of this neighbor
+              // set the f score
+              // set the previous for the path
+              neighbor.h = this.heuristic(neighbor, end, p5)
+              neighbor.f = neighbor.g + neighbor.h
+              neighbor.previous = current
             }
           })
         }
       } else {
         // no solution
       }
+      // on all loops, calculate the current best path
       this.path = []
       let temp = this.current
       this.path.push(temp)
@@ -182,26 +220,13 @@ findAllNeighbors = () => {
         temp = temp.previous
       }
     }
-    const { cols, rows } = this
-
-    p5.background(0)
-    // how we set the cells to be walls
-    if (p5.mouseIsPressed) {
-      const mouseX = p5.mouseX
-      const mouseY = p5.mouseY
-      for (let i = 0; i < cols; i++) {
-        for (let j = 0; j < rows; j++) {
-          this.cells[i][j].click(mouseX, mouseY)
-        }
-      }
-    }
-
+    // reset the previous of all cells so that the path doesn't accumulate
     for (let i = 0; i < this.cells.length; i++) {
       for (let j = 0; j < this.cells[i].length; j++) {
         this.cells[i][j].path = false
       }
     }
-    // draw path
+    // set path
     for (let i = 0; i < this.path.length; i++) {
       this.path[i].path = true
     }
@@ -213,10 +238,8 @@ findAllNeighbors = () => {
         this.cells[i][j].show()
       }
     }
-
-    // NOTE: Do not use setState in draw function or in functions that is executed in draw function... pls use normal variables or class properties for this purposes
   }
-  // -------------------------------------------------
+  // end draw loop-------------------------------------------------
 
   render () {
     const { gridId, saved, grid } = this.state
@@ -232,8 +255,8 @@ findAllNeighbors = () => {
           handleChange={this.handleChange}
           handleSubmit={this.saveGrid}
         />
-        <AStarButton onClick={this.convertAStar}/>
-        <ResetButton cells={this.cells}/>
+        <AStarButton onClick={this.beginAStar}/>
+        <ResetButton resetBoard={this.resetBoard} cells={this.cells}/>
         <Sketch setup={this.setup} draw={this.draw} />
       </div>
     )

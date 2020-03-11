@@ -11,7 +11,7 @@ export default class Cell {
     this.size = size
     this.recentlyClicked = false
     this.previous = undefined
-    this.dontShow = false
+    // A*
     this.f = 0
     this.g = 0
     this.h = 0
@@ -23,7 +23,7 @@ export default class Cell {
     this.start = false
     this.end = false
   }
-  show = (type) => {
+  show = () => {
     const { p5, x, y, size, wall, path, closed, open, start, end } = this
     if (start || end) {
       p5.fill(100, 100, 50)
@@ -39,24 +39,6 @@ export default class Cell {
 
     p5.square(x, y, size)
   }
-  // showPath = () => {
-  //   this.dontShow = true
-  //   const { p5, x, y, size } = this
-  //   p5.fill(0, 0, 255)
-  //   p5.square(x, y, size)
-  // }
-  //   showClosed = () => {
-  //     this.dontShow = true
-  //     const { p5, x, y, size } = this
-  //     p5.fill(255, 0, 0)
-  //     p5.square(x, y, size)
-  //   }
-  // showOpen = () => {
-  //   this.dontShow = true
-  //   const { p5, x, y, size } = this
-  //   p5.fill(0, 255, 0)
-  //   p5.square(x, y, size)
-  // }
 
   click = (mouseX, mouseY) => {
     if (
@@ -71,6 +53,12 @@ export default class Cell {
   }
   reset = () => {
     this.wall = false
+    this.path = false
+    this.start = false
+    this.end = false
+    this.open = false
+    this.closed = false
+    this.previous = undefined
   }
   findNeighbors = (cells, cols, rows) => {
     const { i, j } = this
