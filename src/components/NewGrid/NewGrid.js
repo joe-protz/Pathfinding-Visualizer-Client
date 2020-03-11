@@ -138,11 +138,10 @@ findAllNeighbors = () => {
     // create canvas
     this.p5 = p5
     const myP5 = p5
-    // canvas is 600x500px
+    // canvas is 500x500px
     p5.createCanvas(500, 500).parent(canvasParentRef) // use parent to render canvas in this ref (without that p5 render this canvas outside your component)
     cols = this.cols = Math.ceil(p5.width / scale)
     rows = this.rows = Math.ceil(p5.height / scale)
-    console.log(cols, rows)
 
     // make a new 2d Array of cells, all set to not be walls
     this.cells = new Array(cols)
@@ -179,7 +178,6 @@ findAllNeighbors = () => {
         const { current } = this
         // if we found the solution...
         if (current === end) {
-          console.log('done!')
           this.setState({ algorithm: null })
         } else {
         // Remove from open set and add to closed, setting attr for visuals
