@@ -3,7 +3,9 @@ import { Redirect } from 'react-router-dom'
 import Sketch from 'react-p5'
 // -----------Shared
 import Cell from '../Shared/Cell'
-import ResetButton from '../Shared/ResetButton'
+import ResetBoardButton from '../Shared/ResetBoardButton'
+import RandomWallsButton from '../Shared/RandomWallsButton'
+import ResetWallsButton from '../Shared/ResetWallsButton'
 import AStarButton from '../Shared/AStarButton'
 // import convertCells from '../../lib/convertCells'
 // -----------Libraries
@@ -72,7 +74,8 @@ export default class NewGrid extends Component {
   }
   // initiate and allow A* to run in 'draw'
   beginAStar = () => {
-    this.setStartAndEnd()
+    this.resetBoard()
+    this.cells.forEach(row => row.forEach(cell => cell.reset()))
     this.findAllNeighbors()
     this.openSet = []
     this.closedSet = []
@@ -150,6 +153,8 @@ findAllNeighbors = () => {
         this.cells[i][j] = new Cell(i, j, scale, myP5)
       }
     }
+    this.setStartAndEnd()
+
     // initialize  start and end position
     this.setState({ initiated: true })
   }
@@ -174,6 +179,7 @@ findAllNeighbors = () => {
         // if we found the solution...
         if (current === end) {
           console.log('done!')
+          this.setState({ algorithm: null })
         } else {
         // Remove from open set and add to closed, setting attr for visuals
           this.removeFromArray(openSet, current)
@@ -209,6 +215,8 @@ findAllNeighbors = () => {
           })
         }
       } else {
+        this.setState({ algorithm: null })
+
         // no solution
       }
       // on all loops, calculate the current best path
@@ -255,8 +263,10 @@ findAllNeighbors = () => {
           handleChange={this.handleChange}
           handleSubmit={this.saveGrid}
         />
-        <AStarButton onClick={this.beginAStar}/>
-        <ResetButton resetBoard={this.resetBoard} cells={this.cells}/>
+        <AStarButton onClick={this.beginAStar} />
+        <ResetBoardButton resetBoard={this.resetBoard} cells={this.cells} />
+        <ResetWallsButton running={this.state.algorithm} cells={this.cells} />
+        <RandomWallsButton running={this.state.algorithm} cells={this.cells} start={this.start} end={this.end} />
         <Sketch setup={this.setup} draw={this.draw} />
       </div>
     )

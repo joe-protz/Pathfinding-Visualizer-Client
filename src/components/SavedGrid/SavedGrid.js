@@ -3,7 +3,7 @@ import Sketch from 'react-p5'
 import { withRouter } from 'react-router-dom'
 // -----------Shared
 import Cell from '../Shared/Cell'
-import ResetButton from '../Shared/ResetButton'
+import ResetBoardButton from '../Shared/ResetBoardButton'
 // -----------Libraries
 import axios from 'axios'
 // -----------API URL
@@ -166,7 +166,7 @@ render () {
   if (found) {
     return (
       <div>
-        <ResetButton cells={this.cells}/>
+        <ResetBoardButton cells={this.cells}/>
         {owned && (
           <GridForm
             grid={grid}

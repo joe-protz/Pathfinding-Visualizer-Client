@@ -1,6 +1,6 @@
 import React from 'react'
 
-const ResetButton = (props) => {
+const ResetBoardButton = (props) => {
   const { cells, resetBoard } = props
 
   const reset = () => {
@@ -8,8 +8,8 @@ const ResetButton = (props) => {
     cells.forEach(row => row.forEach(cell => cell.reset()))
   }
   return (
-    <button onClick={reset}>Reset</button>
+    <button onClick={reset}>Reset Board</button>
   )
 }
 
-export default ResetButton
+export default ResetBoardButton

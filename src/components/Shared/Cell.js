@@ -52,13 +52,13 @@ export default class Cell {
     }
   }
   reset = () => {
-    this.wall = false
     this.path = false
-    this.start = false
-    this.end = false
     this.open = false
     this.closed = false
     this.previous = undefined
+  }
+  resetWalls = () => {
+    this.wall = false
   }
   findNeighbors = (cells, cols, rows) => {
     const { i, j } = this
