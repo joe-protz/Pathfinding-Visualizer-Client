@@ -35,7 +35,7 @@ export default class NewGrid extends Component {
   cols
   rows
   current
-  scale = 20
+  scale =10
   // TODO: Make breakpoints to have this be responsive on mobile:
   // scale down and also make the canvas resize if the window is under a certain width
   // Initialize end ------------------------------------------------
@@ -86,7 +86,7 @@ export default class NewGrid extends Component {
   // sets one cell to start and one cell to end the path
   setStartAndEnd= () => {
     this.start = this.cells[0][0]
-    this.end = this.cells[this.cols - 1][12]
+    this.end = this.cells[this.cols - 1][this.rows - 1]
     this.start.start = true
     this.end.end = true
   }
@@ -99,8 +99,8 @@ findAllNeighbors = () => {
 }
   // used for A*, approximation of dist between cell and end
   heuristic = (a, b, p5) => {
-    // return p5.dist(a.x, a.y, b.x, b.y)
-    return Math.abs(a.i - b.i) + Math.abs(a.j - b.j)
+    return p5.dist(a.x, a.y, b.x, b.y)
+    // return Math.abs(a.i - b.i) + Math.abs(a.j - b.j)
   }
 
   removeFromArray = (arr, elt) => {
@@ -139,9 +139,10 @@ findAllNeighbors = () => {
     this.p5 = p5
     const myP5 = p5
     // canvas is 600x500px
-    p5.createCanvas(600, 500).parent(canvasParentRef) // use parent to render canvas in this ref (without that p5 render this canvas outside your component)
+    p5.createCanvas(500, 500).parent(canvasParentRef) // use parent to render canvas in this ref (without that p5 render this canvas outside your component)
     cols = this.cols = Math.ceil(p5.width / scale)
     rows = this.rows = Math.ceil(p5.height / scale)
+    console.log(cols, rows)
 
     // make a new 2d Array of cells, all set to not be walls
     this.cells = new Array(cols)
@@ -160,7 +161,7 @@ findAllNeighbors = () => {
   }
 
   draw = p5 => {
-    p5.background(0)
+    p5.background(255)
 
     this.checkForClicks(p5)
     const { openSet, closedSet, end } = this
@@ -190,17 +191,24 @@ findAllNeighbors = () => {
           // find al the neighbors of the closest cell
           const neighbors = current.neighbors
           // loop through neighbors
+
           neighbors.forEach((neighbor) => {
           // if it is in the closed set, skip it, it's already been calculated
             if (!closedSet.includes(neighbor) && !neighbor.wall) {
               // if not, the tentative g score for that neighbor is current+1
-              const tempG = current.g + 1
+              const tempG = current.g + this.heuristic(current, neighbor, p5)
+              let newPath = false
               // if it's in the open set, check if the new g is better
               // if so , set it
               if (openSet.includes(neighbor)) {
-                if (tempG < neighbor.g) { neighbor.g = tempG }
+                if (tempG < neighbor.g) {
+                  neighbor.g = tempG
+                  newPath = true
+                }
+
               // if not in open set, just set it's g score without the check, and push into open set
               } else {
+                newPath = true
                 neighbor.g = tempG
                 openSet.push(neighbor)
                 neighbor.open = true
@@ -208,9 +216,11 @@ findAllNeighbors = () => {
               // no matter what, find the new best heuristic of this neighbor
               // set the f score
               // set the previous for the path
-              neighbor.h = this.heuristic(neighbor, end, p5)
-              neighbor.f = neighbor.g + neighbor.h
-              neighbor.previous = current
+              if (newPath) {
+                neighbor.h = this.heuristic(neighbor, end, p5)
+                neighbor.f = neighbor.g + neighbor.h
+                neighbor.previous = current
+              }
             }
           })
         }
@@ -246,6 +256,16 @@ findAllNeighbors = () => {
         this.cells[i][j].show()
       }
     }
+
+    p5.noFill()
+    p5.stroke(255, 0, 200)
+    p5.strokeWeight(5)
+    p5.beginShape()
+    for (let i = 0; i < this.path.length; i++) {
+      const current = this.path[i]
+      p5.vertex(current.x + current.size / 2, current.y + current.size / 2)
+    }
+    p5.endShape()
   }
   // end draw loop-------------------------------------------------
 

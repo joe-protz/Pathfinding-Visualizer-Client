@@ -25,24 +25,24 @@ export default class Cell {
   }
   show = () => {
     const { p5, x, y, size, wall, path, closed, open, start, end } = this
+    if (path) return
     if (start || end) {
       p5.fill(100, 100, 50)
     } else if (wall) {
       p5.fill(0)
-    } else if (path) {
-      p5.fill(0, 0, 255)
     } else if (closed) {
       p5.fill(255, 0, 0)
     } else if (open) {
       p5.fill(0, 255, 0)
     } else p5.fill(255)
 
-    p5.square(x, y, size)
+    p5.noStroke()
+    p5.ellipse(x + size / 2, y + size / 2, size)
   }
 
   click = (mouseX, mouseY) => {
     if (
-      this.p5.dist(mouseX - this.size / 2, mouseY - this.size / 2, this.x, this.y) <
+      this.p5.dist(mouseX - this.size, mouseY - this.size, this.x, this.y) <
       this.size / 2 &&
       !this.recentlyClicked
     ) {
@@ -66,5 +66,18 @@ export default class Cell {
     if (i > 0) this.neighbors.push(cells[i - 1][j])
     if (j < rows - 1) this.neighbors.push(cells[i][j + 1])
     if (j > 0) this.neighbors.push(cells[i][j - 1])
+    // Diagonals below--------------------------------------------
+    if (i > 0 && j > 0) {
+      this.neighbors.push(cells[i - 1][j - 1])
+    }
+    if (i < cols - 1 && j > 0) {
+      this.neighbors.push(cells[i + 1][j - 1])
+    }
+    if (i > 0 && j < rows - 1) {
+      this.neighbors.push(cells[i - 1][j + 1])
+    }
+    if (i < cols - 1 && j < rows - 1) {
+      this.neighbors.push(cells[i + 1][j + 1])
+    }
   }
 }

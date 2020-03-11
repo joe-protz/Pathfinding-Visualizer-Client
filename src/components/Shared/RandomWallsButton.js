@@ -6,7 +6,7 @@ const RandomWallsButton = props => {
   const selectWalls = () => {
     if (!props.running) {
       cells.forEach(row => row.forEach(cell => {
-        if (Math.random() < 0.3) {
+        if (Math.random() < 0.4) {
           cell.wall = true
         } else {
           cell.wall = false
