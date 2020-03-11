@@ -7,16 +7,39 @@ export default class Cell {
     this.j = j
     this.x = i * size
     this.y = j * size
+    this.neighbors = []
     this.size = size
-    this.wall = wall || false
     this.recentlyClicked = false
+    this.previous = undefined
+    // A*
+    this.f = 0
+    this.g = 0
+    this.h = 0
+    // color vars
+    this.wall = wall || false
+    this.path = false
+    this.closed = false
+    this.open = false
+    this.start = false
+    this.end = false
   }
   show = () => {
-    const { p5, x, y, size } = this
-    if (this.wall) p5.fill(0)
-    if (!this.wall) p5.fill(255)
+    const { p5, x, y, size, wall, path, closed, open, start, end } = this
+    if (start || end) {
+      p5.fill(100, 100, 50)
+    } else if (wall) {
+      p5.fill(0)
+    } else if (path) {
+      p5.fill(0, 0, 255)
+    } else if (closed) {
+      p5.fill(255, 0, 0)
+    } else if (open) {
+      p5.fill(0, 255, 0)
+    } else p5.fill(255)
+
     p5.square(x, y, size)
   }
+
   click = (mouseX, mouseY) => {
     if (
       this.p5.dist(mouseX - this.size / 2, mouseY - this.size / 2, this.x, this.y) <
@@ -30,5 +53,18 @@ export default class Cell {
   }
   reset = () => {
     this.wall = false
+    this.path = false
+    this.start = false
+    this.end = false
+    this.open = false
+    this.closed = false
+    this.previous = undefined
+  }
+  findNeighbors = (cells, cols, rows) => {
+    const { i, j } = this
+    if (i < cols - 1) this.neighbors.push(cells[i + 1][j])
+    if (i > 0) this.neighbors.push(cells[i - 1][j])
+    if (j < rows - 1) this.neighbors.push(cells[i][j + 1])
+    if (j > 0) this.neighbors.push(cells[i][j - 1])
   }
 }
