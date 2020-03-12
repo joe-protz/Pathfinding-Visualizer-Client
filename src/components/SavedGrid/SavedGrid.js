@@ -399,24 +399,26 @@ class SavedGrid extends Component {
                 grid={grid}
                 handleChange={this.handleChange}
                 handleSubmit={this.updateGrid}
+                owned={owned}
+                deleteGrid={this.deleteGrid}
+                saveAsNew={this.saveAsNew}
               />
             </div>
           )}
-          {owned && (
-            <button onClick={this.deleteGrid}>
-              Delete Your Beautiful Creation
-            </button>
-          )}
-          <AStarButton onClick={this.beginAStar} />
-          <ResetBoardButton resetBoard={this.resetBoard} cells={this.cells} />
-          <ResetWallsButton running={this.state.algorithm} cells={this.cells} />
-          <button onClick={this.saveAsNew}>Save as new!</button>
-          <RandomWallsButton
-            running={this.state.algorithm}
-            cells={this.cells}
-            start={this.start}
-            end={this.end}
-          />
+          <div className="center">
+            <AStarButton onClick={this.beginAStar} />
+            <ResetBoardButton resetBoard={this.resetBoard} cells={this.cells} />
+            <ResetWallsButton
+              running={this.state.algorithm}
+              cells={this.cells}
+            />
+            <RandomWallsButton
+              running={this.state.algorithm}
+              cells={this.cells}
+              start={this.start}
+              end={this.end}
+            />
+          </div>
           <Sketch setup={this.setup} draw={this.draw} />
         </div>
       )
