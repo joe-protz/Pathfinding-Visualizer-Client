@@ -5,8 +5,7 @@ import { signIn } from '../../api/auth'
 import messages from '../AutoDismissAlert/messages'
 
 import Form from 'react-bootstrap/Form'
-import Button from 'react-bootstrap/Button'
-
+import { PrimaryButton } from '../Shared/Styled_Components'
 class SignIn extends Component {
   constructor () {
     super()
@@ -74,12 +73,12 @@ class SignIn extends Component {
                 onChange={this.handleChange}
               />
             </Form.Group>
-            <Button
-              variant="primary"
+            <PrimaryButton
+              noMargin={true}
               type="submit"
             >
               Submit
-            </Button>
+            </PrimaryButton>
           </Form>
         </div>
       </div>
