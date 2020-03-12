@@ -5,9 +5,12 @@ import axios from 'axios'
 // ---------------url
 import apiUrl from '../../apiConfig'
 import ThumbnailGrid from '../ThumbnailGrid/ThumbnailGrid'
+import Welcome from '../Welcome/Welcome'
+import FirstVisit from '../FirstVisit/FirstVisit'
+
 const Home = (props) => {
   const [grids, setGrids] = useState([null])
-  const { user } = props
+  const { user, updateUser } = props
   // Only do the axios req if user is signed in-------------
   useEffect(() => {
     if (user) {
@@ -61,7 +64,11 @@ const Home = (props) => {
         </Link>
       ))
   }
-  if (grids[0]) {
+  if (user && user.firstTime) {
+    return (
+      <FirstVisit updateUser={updateUser} gridsFeed={gridsFeed}user={user}/>
+    )
+  } else if (grids[0]) {
     return (
       <div className="allGrids">
         {user && (
@@ -90,7 +97,7 @@ const Home = (props) => {
     return (
       'Loading...'
     )
-  } else return <div>Welcome to my Pathfinding Visualization App!!!</div>
+  } else return (<Welcome/>)
 }
 
 export default withRouter(Home)

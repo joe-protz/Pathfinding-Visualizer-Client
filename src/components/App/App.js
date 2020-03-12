@@ -27,7 +27,10 @@ class App extends Component {
   }
 
   setUser = user => this.setState({ user })
-
+  updateUser =() => {
+    this.setState({ user: { ...this.state.user, firstTime: false } })
+    console.log(this.state.user)
+  }
   clearUser = () => this.setState({ user: null })
 
   msgAlert = ({ heading, message, variant }) => {
@@ -85,7 +88,7 @@ class App extends Component {
           <Route
             exact
             path="/"
-            render={() => <Home msgAlert={this.msgAlert} user={user} />}
+            render={() => <Home msgAlert={this.msgAlert} user={user} updateUser={this.updateUser}/>}
           />
           {/* SHOW Grid */}
           <AuthenticatedRoute
