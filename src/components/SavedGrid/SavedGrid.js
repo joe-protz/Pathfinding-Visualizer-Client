@@ -22,7 +22,8 @@ class SavedGrid extends Component {
       owned: false,
       deleted: false,
       initiated: false,
-      algorithm: null
+      algorithm: null,
+      saved: false
     }
   }
   // variables are initialized outside of the constructor if they're used with sketch
@@ -61,6 +62,34 @@ class SavedGrid extends Component {
         })
       })
       .catch(console.error)
+  }
+  // when a grid is saved, get that data!
+  componentDidUpdate () {
+    if (this.state.saved) {
+      this.setState({ saved: false })
+      axios({
+        url: apiUrl + '/grids/' + this.state.newGridId,
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${this.props.user.token}`
+        }
+      })
+        .then(res => {
+          // set cells to the res data
+          this.cells = res.data.grid.walls
+          this.updated = false
+          // sets this components state using res data
+          this.setState({
+            found: true,
+            owned: res.data.grid.editable,
+            grid: { name: res.data.grid.name },
+            gridId: res.data.grid._id,
+            saved: false
+          }, () => this.p5.loop())
+        })
+        // .then(() => this.p5.loop())
+        .catch(console.error)
+    }
   }
   // End initialize -------------------------------------
 
@@ -102,6 +131,28 @@ class SavedGrid extends Component {
           variant: 'danger'
         })
       })
+  }
+
+  saveAsNew = event => {
+    event.preventDefault()
+    const name = this.state.grid.name
+    const map = this.cells.map(row => row.map(cell => cell.wall))
+    axios({
+      url: `${apiUrl}/grids`,
+      method: 'POST',
+      data: { grid: { walls: map, name: name } },
+      headers: {
+        Authorization: `Bearer ${this.props.user.token}`
+      }
+    })
+      .then(res => {
+        // with state set to saved the render function will route to show/${this}
+        this.setState({
+          saved: true,
+          newGridId: res.data.grid._id
+        })
+      })
+      .catch(console.error)
   }
   // delete grid if user has already been warned, redirect to home
   deleteGrid = () => {
@@ -330,8 +381,12 @@ class SavedGrid extends Component {
   // end draw loop-------------------------------------------------
 
   render () {
-    const { deleted, found, grid, owned } = this.state
+    const { deleted, found, grid, owned, saved, newGridId } = this.state
     const { history } = this.props
+    // TODO: FIX THIS REDIRECT!!!!!!!!
+    if (saved) {
+      history.push('/grids/' + newGridId)
+    }
     if (deleted) {
       history.push('/')
     }
@@ -355,6 +410,7 @@ class SavedGrid extends Component {
           <AStarButton onClick={this.beginAStar} />
           <ResetBoardButton resetBoard={this.resetBoard} cells={this.cells} />
           <ResetWallsButton running={this.state.algorithm} cells={this.cells} />
+          <button onClick={this.saveAsNew}>Save as new!</button>
           <RandomWallsButton
             running={this.state.algorithm}
             cells={this.cells}

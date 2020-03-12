@@ -89,6 +89,7 @@ class App extends Component {
           {/* SHOW Grid */}
           <AuthenticatedRoute
             user={user}
+            exact
             path="/grids/:id"
             render={({ match }) => (
               <SavedGrid msgAlert={this.msgAlert} match={match} user={user} />
