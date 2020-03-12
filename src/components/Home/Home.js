@@ -4,7 +4,7 @@ import { Link, withRouter } from 'react-router-dom'
 import axios from 'axios'
 // ---------------url
 import apiUrl from '../../apiConfig'
-
+import ThumbnailGrid from '../ThumbnailGrid/ThumbnailGrid'
 const Home = (props) => {
   const [grids, setGrids] = useState([])
   const { user } = props
@@ -28,9 +28,12 @@ const Home = (props) => {
   let gridsHtml
   if (user) {
     gridsHtml = grids.map(grid => (
-      <li key={grid.id}>
-        <Link to={`/grids/${grid._id}`}>{grid.name}</Link>
-      </li>
+
+      <Link key={grid.id} to={`/grids/${grid._id}`}>
+        <h3>{grid.name}</h3>
+        <ThumbnailGrid key={grid.id} gridId={grid._id} user={user} />
+      </Link>
+
     ))
   } else {
     // TODO: Change this to a component
@@ -38,7 +41,7 @@ const Home = (props) => {
   }
 
   return (
-    <div>
+    <div className='allGrids'>
       {user && <h4>All Grids</h4>}
       {user && (
         <Link to={'/new_grid'}>
