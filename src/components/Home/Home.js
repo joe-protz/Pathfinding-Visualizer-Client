@@ -25,32 +25,61 @@ const Home = (props) => {
 
   // If the user is signed in, map over the grids, otherwise just display a welcome component (html for now) ---------------
 
-  let gridsHtml
+  let ownedHtml
+  let gridsFeed
   if (user) {
-    gridsHtml = grids.map((grid, index) => (
-
-      <Link className='col-md-4' key={grid.id} to={`/grids/${grid._id}`}>
-
-        <ThumbnailGrid className="thumbnail" name={grid.name} key={grid.id} gridId={grid._id} user={user} />
-      </Link>
-
-    ))
-  } else {
-    // TODO: Change this to a component
-    gridsHtml = <div>Welcome to my Pathfinding Visualization App!!!</div>
-  }
-
-  return (
-    <div className='allGrids'>
-      {user && <h4>All Grids</h4>}
-      {user && (
-        <Link to={'/new_grid'}>
-          <button >New Grid</button>
+    // owned grids
+    ownedHtml = grids
+      .filter(grid => grid.editable)
+      .slice(0, 12)
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+      .map((grid, index) => (
+        <Link className="col-md-4" key={grid.id} to={`/grids/${grid._id}`}>
+          <ThumbnailGrid
+            className="thumbnail"
+            name={grid.name}
+            key={grid.id}
+            gridId={grid._id}
+            user={user}
+          />
         </Link>
-      )}
-      <div className='row'>{gridsHtml}</div>
-    </div>
-  )
+      ))
+    gridsFeed = grids
+      .filter(grid => !grid.editable)
+      .slice(0, 12)
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+      .map((grid, index) => (
+        <Link className="col-md-4" key={grid.id} to={`/grids/${grid._id}`}>
+          <ThumbnailGrid
+            className="thumbnail"
+            name={grid.name}
+            key={grid.id}
+            gridId={grid._id}
+            user={user}
+          />
+        </Link>
+      ))
+  }
+  if (grids.length) {
+    return (
+      <div className="allGrids">
+        {user && (
+          <Link to={'/new_grid'}>
+            <button>New Grid</button>
+          </Link>
+        )}
+        {user && <Link to={'/my_grids'}>My Newest Grids</Link>}
+
+        <div className="row">{ownedHtml}</div>
+        {user && <div>Grids Feed</div>}
+        <div className="row">{gridsFeed}</div>
+      </div>
+    )
+  } else if (user) {
+    return (
+      'Loading...'
+    )
+  } else return <div>Welcome to my Pathfinding Visualization App!!!</div>
 }
 
 export default withRouter(Home)
