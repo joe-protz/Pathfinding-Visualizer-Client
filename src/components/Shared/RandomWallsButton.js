@@ -1,4 +1,5 @@
 import React from 'react'
+import { PrimaryButton } from '../Shared/Styled_Components'
 
 const RandomWallsButton = props => {
   const { cells, start, end } = props
@@ -16,7 +17,7 @@ const RandomWallsButton = props => {
     start.wall = false
     end.wall = false
   }
-  return <button onClick={selectWalls}>Random Walls</button>
+  return <PrimaryButton onClick={selectWalls}>Random Walls</PrimaryButton>
 }
 
 export default RandomWallsButton

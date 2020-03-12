@@ -281,10 +281,17 @@ findAllNeighbors = () => {
           handleChange={this.handleChange}
           handleSubmit={this.saveGrid}
         />
-        <AStarButton onClick={this.beginAStar} />
-        <ResetBoardButton resetBoard={this.resetBoard} cells={this.cells} />
-        <ResetWallsButton running={this.state.algorithm} cells={this.cells} />
-        <RandomWallsButton running={this.state.algorithm} cells={this.cells} start={this.start} end={this.end} />
+        <div className='center' >
+          <AStarButton onClick={this.beginAStar} />
+          <ResetBoardButton resetBoard={this.resetBoard} cells={this.cells} />
+          <ResetWallsButton running={this.state.algorithm} cells={this.cells} />
+          <RandomWallsButton
+            running={this.state.algorithm}
+            cells={this.cells}
+            start={this.start}
+            end={this.end}
+          />
+        </div>
         <Sketch setup={this.setup} draw={this.draw} />
       </div>
     )

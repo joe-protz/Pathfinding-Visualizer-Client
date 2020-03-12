@@ -1,4 +1,5 @@
 import React from 'react'
+import { PrimaryButton } from '../Shared/Styled_Components'
 
 const ResetButton = (props) => {
   const { cells } = props
@@ -9,7 +10,7 @@ const ResetButton = (props) => {
     }
   }
   return (
-    <button onClick={reset}>Reset Walls</button>
+    <PrimaryButton onClick={reset}>Reset Walls</PrimaryButton>
   )
 }
 

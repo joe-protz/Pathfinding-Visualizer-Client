@@ -5,9 +5,13 @@ import axios from 'axios'
 // ---------------url
 import apiUrl from '../../apiConfig'
 import ThumbnailGrid from '../ThumbnailGrid/ThumbnailGrid'
+import Welcome from '../Welcome/Welcome'
+import FirstVisit from '../FirstVisit/FirstVisit'
+import { PrimaryButton } from '../Shared/Styled_Components'
+
 const Home = (props) => {
-  const [grids, setGrids] = useState([])
-  const { user } = props
+  const [grids, setGrids] = useState([null])
+  const { user, updateUser } = props
   // Only do the axios req if user is signed in-------------
   useEffect(() => {
     if (user) {
@@ -24,13 +28,15 @@ const Home = (props) => {
   }, [])
 
   // If the user is signed in, map over the grids, otherwise just display a welcome component (html for now) ---------------
-
+  let ownedOne = false
   let ownedHtml
   let gridsFeed
-  if (user) {
+
+  if (user && grids[0]) {
+    const myGrids = grids.filter(grid => grid.editable)
+    if (myGrids.length > 0) { ownedOne = true }
     // owned grids
-    ownedHtml = grids
-      .filter(grid => grid.editable)
+    ownedHtml = myGrids
       .slice(0, 12)
       .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
       .map((grid, index) => (
@@ -60,26 +66,49 @@ const Home = (props) => {
         </Link>
       ))
   }
-  if (grids.length) {
+  if (user && user.firstTime) {
+    return (
+      <FirstVisit updateUser={updateUser} gridsFeed={gridsFeed}user={user}/>
+    )
+  } else if (grids[0]) {
     return (
       <div className="allGrids">
-        {user && (
+        {user && ownedOne && (
           <Link to={'/new_grid'}>
-            <button>New Grid</button>
+            <PrimaryButton>New Grid</PrimaryButton>
           </Link>
         )}
-        {user && <Link to={'/my_grids'}>My Newest Grids</Link>}
-
+        {ownedOne && (
+          <span>
+            <Link to={'/my_grids'}>
+              <PrimaryButton>My Grids</PrimaryButton>
+            </Link>
+            <h2>Here are your most recent grids</h2>
+          </span>
+        )}
+        {!ownedOne && (
+          <Link to={'/new_grid'}>
+            <PrimaryButton className={'btn btn-primary'}>
+              You do not own any grids, click here to begin!
+            </PrimaryButton>
+          </Link>
+        )}
         <div className="row">{ownedHtml}</div>
-        {user && <div>Grids Feed</div>}
+        {user && <h2>Here are some recently made community grids!</h2>}
         <div className="row">{gridsFeed}</div>
       </div>
+    )
+  } else if (!grids.length && user) {
+    return (
+      <Link to={'/new_grid'}>
+        <PrimaryButton>Wow you are the first user, click here to create a grid!</PrimaryButton>
+      </Link>
     )
   } else if (user) {
     return (
       'Loading...'
     )
-  } else return <div>Welcome to my Pathfinding Visualization App!!!</div>
+  } else return (<Welcome/>)
 }
 
 export default withRouter(Home)
