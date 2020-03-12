@@ -27,13 +27,13 @@ export default class Cell {
     const { p5, x, y, size, wall, path, closed, open, start, end } = this
     if (path) return
     if (start || end) {
-      p5.fill(100, 100, 50)
+      p5.fill(200, 0, 200)
     } else if (wall) {
-      p5.fill(0)
+      p5.fill('#343A40')
     } else if (closed) {
-      p5.fill(255, 0, 0)
+      p5.fill(255, 0, 0, 50)
     } else if (open) {
-      p5.fill(0, 255, 0)
+      p5.fill(0, 255, 0, 50)
     } else p5.fill(255)
 
     p5.noStroke()

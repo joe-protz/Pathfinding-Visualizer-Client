@@ -7,6 +7,7 @@ import apiUrl from '../../apiConfig'
 import ThumbnailGrid from '../ThumbnailGrid/ThumbnailGrid'
 import Welcome from '../Welcome/Welcome'
 import FirstVisit from '../FirstVisit/FirstVisit'
+import { PrimaryButton } from '../Shared/Styled_Components'
 
 const Home = (props) => {
   const [grids, setGrids] = useState([null])
@@ -30,6 +31,7 @@ const Home = (props) => {
   let ownedOne = false
   let ownedHtml
   let gridsFeed
+
   if (user && grids[0]) {
     const myGrids = grids.filter(grid => grid.editable)
     if (myGrids.length > 0) { ownedOne = true }
@@ -71,26 +73,35 @@ const Home = (props) => {
   } else if (grids[0]) {
     return (
       <div className="allGrids">
-        {user && (
+        {user && ownedOne && (
           <Link to={'/new_grid'}>
-            <button>New Grid</button>
+            <PrimaryButton>New Grid</PrimaryButton>
           </Link>
         )}
-        {ownedOne && <Link to={'/my_grids'}>My Newest Grids</Link>}
+        {ownedOne && (
+          <span>
+            <Link to={'/my_grids'}>
+              <PrimaryButton>My Grids</PrimaryButton>
+            </Link>
+            <h2>Here are your most recent grids</h2>
+          </span>
+        )}
         {!ownedOne && (
           <Link to={'/new_grid'}>
-            You do not own any grids, click here to begin!
+            <PrimaryButton className={'btn btn-primary'}>
+              You do not own any grids, click here to begin!
+            </PrimaryButton>
           </Link>
         )}
         <div className="row">{ownedHtml}</div>
-        {user && <div>Grids Feed</div>}
+        {user && <h2>Here are some recently made community grids!</h2>}
         <div className="row">{gridsFeed}</div>
       </div>
     )
   } else if (!grids.length && user) {
     return (
       <Link to={'/new_grid'}>
-        <button>Wow you are the first user, click here to create a grid!</button>
+        <PrimaryButton>Wow you are the first user, click here to create a grid!</PrimaryButton>
       </Link>
     )
   } else if (user) {

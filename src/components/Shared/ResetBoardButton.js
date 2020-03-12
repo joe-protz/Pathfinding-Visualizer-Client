@@ -1,4 +1,5 @@
 import React from 'react'
+import { PrimaryButton } from '../Shared/Styled_Components'
 
 const ResetBoardButton = (props) => {
   const { cells, resetBoard } = props
@@ -8,7 +9,7 @@ const ResetBoardButton = (props) => {
     cells.forEach(row => row.forEach(cell => cell.reset()))
   }
   return (
-    <button onClick={reset}>Reset Board</button>
+    <PrimaryButton onClick={reset}>Reset Path</PrimaryButton>
   )
 }
 
