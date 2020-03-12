@@ -6,7 +6,7 @@ import axios from 'axios'
 import apiUrl from '../../apiConfig'
 import ThumbnailGrid from '../ThumbnailGrid/ThumbnailGrid'
 const Home = (props) => {
-  const [grids, setGrids] = useState([])
+  const [grids, setGrids] = useState([null])
   const { user } = props
   // Only do the axios req if user is signed in-------------
   useEffect(() => {
@@ -60,7 +60,7 @@ const Home = (props) => {
         </Link>
       ))
   }
-  if (grids.length) {
+  if (grids[0]) {
     return (
       <div className="allGrids">
         {user && (
@@ -74,6 +74,12 @@ const Home = (props) => {
         {user && <div>Grids Feed</div>}
         <div className="row">{gridsFeed}</div>
       </div>
+    )
+  } else if (grids.length) {
+    return (
+      <Link to={'/new_grid'}>
+        <button>Wow you are the first user, click here to create a grid!</button>
+      </Link>
     )
   } else if (user) {
     return (
