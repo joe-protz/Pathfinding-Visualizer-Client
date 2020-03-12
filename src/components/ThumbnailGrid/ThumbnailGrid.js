@@ -89,7 +89,11 @@ class ThumbnailGrid extends Component {
   }
 
   render () {
-    return <Sketch setup={this.setup} draw={this.draw} />
+    return (
+      <div className="align">
+        {this.props.name}
+        <Sketch setup={this.setup} draw={this.draw} />
+      </div>)
   }
 }
 

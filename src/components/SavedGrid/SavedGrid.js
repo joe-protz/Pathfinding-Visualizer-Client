@@ -87,7 +87,6 @@ class SavedGrid extends Component {
               saved: false
             }, () => this.p5.loop())
           })
-        // .then(() => this.p5.loop())
           .catch(console.error)
       })
     }

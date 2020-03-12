@@ -27,11 +27,11 @@ const Home = (props) => {
 
   let gridsHtml
   if (user) {
-    gridsHtml = grids.map(grid => (
+    gridsHtml = grids.map((grid, index) => (
 
-      <Link key={grid.id} to={`/grids/${grid._id}`}>
-        <h3>{grid.name}</h3>
-        <ThumbnailGrid key={grid.id} gridId={grid._id} user={user} />
+      <Link className='col-md-4' key={grid.id} to={`/grids/${grid._id}`}>
+
+        <ThumbnailGrid className="thumbnail" name={grid.name} key={grid.id} gridId={grid._id} user={user} />
       </Link>
 
     ))
@@ -48,7 +48,7 @@ const Home = (props) => {
           <button >New Grid</button>
         </Link>
       )}
-      <ul>{gridsHtml}</ul>
+      <div className='row'>{gridsHtml}</div>
     </div>
   )
 }
