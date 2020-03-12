@@ -14,6 +14,7 @@ import Home from '../Home/Home'
 import SavedGrid from '../SavedGrid/SavedGrid'
 import NewGrid from '../NewGrid/NewGrid'
 import GridsList from '../GridsList/GridsList'
+import About from '../About/About'
 // ------------------------------------
 
 class App extends Component {
@@ -88,7 +89,13 @@ class App extends Component {
           <Route
             exact
             path="/"
-            render={() => <Home msgAlert={this.msgAlert} user={user} updateUser={this.updateUser}/>}
+            render={() => (
+              <Home
+                msgAlert={this.msgAlert}
+                user={user}
+                updateUser={this.updateUser}
+              />
+            )}
           />
           {/* SHOW Grid */}
           <AuthenticatedRoute
@@ -113,6 +120,10 @@ class App extends Component {
             render={({ match }) => (
               <GridsList msgAlert={this.msgAlert} match={match} user={user} />
             )}
+          />
+          <Route
+            path="/about"
+            component={About}
           />
         </main>
       </Fragment>
