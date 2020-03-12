@@ -13,6 +13,7 @@ import ChangePassword from '../ChangePassword/ChangePassword'
 import Home from '../Home/Home'
 import SavedGrid from '../SavedGrid/SavedGrid'
 import NewGrid from '../NewGrid/NewGrid'
+import GridsList from '../GridsList/GridsList'
 // ------------------------------------
 
 class App extends Component {
@@ -101,6 +102,13 @@ class App extends Component {
             path="/new_grid"
             render={({ match }) => (
               <NewGrid msgAlert={this.msgAlert} match={match} user={user} />
+            )}
+          />
+          <AuthenticatedRoute
+            user={user}
+            path="/my_grids"
+            render={({ match }) => (
+              <GridsList msgAlert={this.msgAlert} match={match} user={user} />
             )}
           />
         </main>

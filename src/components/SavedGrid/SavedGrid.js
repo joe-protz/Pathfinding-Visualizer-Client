@@ -66,29 +66,29 @@ class SavedGrid extends Component {
   // when a grid is saved, get that data!
   componentDidUpdate () {
     if (this.state.saved) {
-      this.setState({ saved: false })
-      axios({
-        url: apiUrl + '/grids/' + this.state.newGridId,
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${this.props.user.token}`
-        }
-      })
-        .then(res => {
-          // set cells to the res data
-          this.cells = res.data.grid.walls
-          this.updated = false
-          // sets this components state using res data
-          this.setState({
-            found: true,
-            owned: res.data.grid.editable,
-            grid: { name: res.data.grid.name },
-            gridId: res.data.grid._id,
-            saved: false
-          }, () => this.p5.loop())
+      this.setState({ saved: false }, () => {
+        axios({
+          url: apiUrl + '/grids/' + this.state.newGridId,
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${this.props.user.token}`
+          }
         })
-        // .then(() => this.p5.loop())
-        .catch(console.error)
+          .then(res => {
+          // set cells to the res data
+            this.cells = res.data.grid.walls
+            this.updated = false
+            // sets this components state using res data
+            this.setState({
+              found: true,
+              owned: res.data.grid.editable,
+              grid: { name: res.data.grid.name },
+              gridId: res.data.grid._id,
+              saved: false
+            }, () => this.p5.loop())
+          })
+          .catch(console.error)
+      })
     }
   }
   // End initialize -------------------------------------
