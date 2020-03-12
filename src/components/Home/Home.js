@@ -24,13 +24,14 @@ const Home = (props) => {
   }, [])
 
   // If the user is signed in, map over the grids, otherwise just display a welcome component (html for now) ---------------
-
+  let ownedOne = false
   let ownedHtml
   let gridsFeed
-  if (user) {
+  if (user && grids[0]) {
+    const myGrids = grids.filter(grid => grid.editable)
+    if (myGrids.length > 0) { ownedOne = true }
     // owned grids
-    ownedHtml = grids
-      .filter(grid => grid.editable)
+    ownedHtml = myGrids
       .slice(0, 12)
       .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
       .map((grid, index) => (
@@ -68,14 +69,18 @@ const Home = (props) => {
             <button>New Grid</button>
           </Link>
         )}
-        {user && <Link to={'/my_grids'}>My Newest Grids</Link>}
-
+        {ownedOne && <Link to={'/my_grids'}>My Newest Grids</Link>}
+        {!ownedOne && (
+          <Link to={'/new_grid'}>
+            You do not own any grids, click here to begin!
+          </Link>
+        )}
         <div className="row">{ownedHtml}</div>
         {user && <div>Grids Feed</div>}
         <div className="row">{gridsFeed}</div>
       </div>
     )
-  } else if (grids.length) {
+  } else if (!grids.length && user) {
     return (
       <Link to={'/new_grid'}>
         <button>Wow you are the first user, click here to create a grid!</button>
