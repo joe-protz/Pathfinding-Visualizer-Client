@@ -1,6 +1,7 @@
 @import '~bootstrap/scss/bootstrap';
 body{
   background: #eeeeee;
+  margin-bottom: 20px;
 }
 .react-p5 {
   display: flex;
@@ -19,4 +20,7 @@ body{
   display: flex;
   align-items:center;
   justify-content:center; 
+}
+h4 {
+  margin : 2rem 0;
 }
