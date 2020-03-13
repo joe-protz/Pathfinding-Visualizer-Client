@@ -12,7 +12,7 @@ const GridsList = (props) => {
   // Only do the axios req if user is signed in-------------
   useEffect(() => {
     axios({
-      url: `${apiUrl}/grids`,
+      url: `${apiUrl}/my/grids`,
       method: 'get',
       headers: {
         Authorization: `Bearer ${user.token}`
