@@ -7,13 +7,17 @@ import ResetBoardButton from '../Shared/ResetBoardButton'
 import RandomWallsButton from '../Shared/RandomWallsButton'
 import ResetWallsButton from '../Shared/ResetWallsButton'
 import AStarButton from '../Shared/AStarButton'
+import BreadthButton from '../Shared/BreadthButton'
+
 // -----------Shared functions
 import setStartAndEnd from '../../lib/setStartAndEnd'
 import beginAStar from '../../lib/beginAStar'
+import beginBreadth from '../../lib/beginBreadth'
 import findAllNeighbors from '../../lib/findAllNeighbors'
 import resetBoard from '../../lib/resetBoard'
 import checkForClicks from '../../lib/checkForClicks'
 
+import runBreadthFirst from '../../lib/runBreadthFirst'
 import runAStar from '../../lib/runAStar'
 
 // -----------Libraries
@@ -55,6 +59,8 @@ class SavedGrid extends Component {
   resetBoard = resetBoard.bind(this)
   checkForClicks = checkForClicks.bind(this)
   runAStar = runAStar.bind(this)
+  runBreadthFirst = runBreadthFirst.bind(this)
+  beginBreadth = beginBreadth.bind(this)
 
   // TODO: Make breakpoints to have this be responsive on mobile:
   // scale down and also make the canvas resize if the window is under a certain width
@@ -234,6 +240,7 @@ class SavedGrid extends Component {
 
     this.checkForClicks(p5)
     this.runAStar(p5)
+    this.runBreadthFirst(p5)
 
     // continual loop to show all cells based on their state
 
@@ -281,6 +288,8 @@ class SavedGrid extends Component {
 
           <div className="center">
             <AStarButton onClick={this.beginAStar} />
+            <BreadthButton className="col-md-3" onClick={this.beginBreadth} />
+
             <RandomWallsButton
               running={this.state.algorithm}
               cells={this.cells}
