@@ -2,7 +2,7 @@ import React from 'react'
 import { PrimaryButton, DangerButton } from '../Shared/Styled_Components'
 import Form from 'react-bootstrap/Form'
 
-const GridForm = ({ grid, handleChange, handleSubmit, owned, deleteGrid, saveAsNew }) => (
+const GridForm = ({ grid, handleChange, handleSubmit, owned, deleteGrid, saveAsNew, newGrid, deleteBool }) => (
   <span>
     <Form
       style={{ margin: '2rem auto .3rem', width: '60%' }}
@@ -14,10 +14,10 @@ const GridForm = ({ grid, handleChange, handleSubmit, owned, deleteGrid, saveAsN
         value={grid.name}
         onChange={handleChange}
       />
-      <PrimaryButton type="submit">Save</PrimaryButton>
-      <PrimaryButton onClick={saveAsNew}>Save as new!</PrimaryButton>
+      {owned && <PrimaryButton type="submit">Save</PrimaryButton>}
+      {!newGrid && <PrimaryButton onClick={saveAsNew}>Save as new!</PrimaryButton>}
 
-      {owned && (
+      {deleteBool && (
         <DangerButton
           type="button"
           onClick={deleteGrid}
