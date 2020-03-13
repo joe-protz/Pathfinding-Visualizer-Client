@@ -280,6 +280,9 @@ findAllNeighbors = () => {
           grid={grid}
           handleChange={this.handleChange}
           handleSubmit={this.saveGrid}
+          newGrid={true}
+          owned={true}
+          deleteGrid={false}
         />
         <div className='center' >
           <AStarButton onClick={this.beginAStar} />

@@ -383,7 +383,7 @@ class SavedGrid extends Component {
   render () {
     const { deleted, found, grid, owned, saved, newGridId } = this.state
     const { history } = this.props
-    // TODO: FIX THIS REDIRECT!!!!!!!!
+    const deleteBool = owned
     if (saved) {
       history.push('/grids/' + newGridId)
     }
@@ -393,31 +393,30 @@ class SavedGrid extends Component {
     if (found) {
       return (
         <div>
-          {owned && (
-            <div>
-              <GridForm
-                grid={grid}
-                handleChange={this.handleChange}
-                handleSubmit={this.updateGrid}
-                owned={owned}
-                deleteGrid={this.deleteGrid}
-                saveAsNew={this.saveAsNew}
-              />
-            </div>
-          )}
+          <GridForm
+            grid={grid}
+            handleChange={this.handleChange}
+            handleSubmit={this.updateGrid}
+            owned={owned}
+            deleteGrid={this.deleteGrid}
+            saveAsNew={this.saveAsNew}
+            deleteBool={deleteBool}
+          />
+
           <div className="center">
             <AStarButton onClick={this.beginAStar} />
-            <ResetBoardButton resetBoard={this.resetBoard} cells={this.cells} />
-            <ResetWallsButton
-              running={this.state.algorithm}
-              cells={this.cells}
-            />
             <RandomWallsButton
               running={this.state.algorithm}
               cells={this.cells}
               start={this.start}
               end={this.end}
             />
+            <ResetBoardButton resetBoard={this.resetBoard} cells={this.cells} />
+            <ResetWallsButton
+              running={this.state.algorithm}
+              cells={this.cells}
+            />
+
           </div>
           <Sketch setup={this.setup} draw={this.draw} />
         </div>
