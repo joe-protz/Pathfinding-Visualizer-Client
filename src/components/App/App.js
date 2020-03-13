@@ -30,7 +30,6 @@ class App extends Component {
   setUser = user => this.setState({ user })
   updateUser =() => {
     this.setState({ user: { ...this.state.user, firstTime: false } })
-    console.log(this.state.user)
   }
   clearUser = () => this.setState({ user: null })
 
@@ -121,6 +120,7 @@ class App extends Component {
               <GridsList msgAlert={this.msgAlert} match={match} user={user} />
             )}
           />
+          {/* About */}
           <Route
             path="/about"
             component={About}
