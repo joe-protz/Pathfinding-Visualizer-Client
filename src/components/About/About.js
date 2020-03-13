@@ -1,5 +1,7 @@
 import React, { Fragment } from 'react'
 import AStar from '../../images/Example.png'
+import Breadth from '../../images/Breadth.png'
+
 const About = props => {
   return (
     <Fragment>
@@ -8,8 +10,8 @@ const About = props => {
         This app is intended to be a fun way to visualize how search algorithms
         work. Here is a brief summary of each.
       </p>
+      <h4>A*</h4>
       <p>
-        <h4>A*</h4>
         A* is a search algorithm that is based off of Dijkstras Algorithm, which
         was less efficient. A* achieves this efficiency by using a heuristic
         approach, where every loop the algorithm is checking to see the next
@@ -20,8 +22,8 @@ const About = props => {
         A* uses two data structures , an open set and a closed set. My algorithm
         uses arrays, but there are more efficient ways to do this. In the open
         set are all of the possible nodes that we will be evaluating on the next
-        loop. In the closed set are all nodes that have already
-        been calculated and do not need to be checked again.
+        loop. In the closed set are all nodes that have already been calculated
+        and do not need to be checked again.
       </p>
       <p>
         The open set starts with just the start node. We begin by checking if
@@ -34,14 +36,50 @@ const About = props => {
         long it will take to get to the end.
       </p>
       <p>
-        Once we have found the best candidate in the open set, it is removed from the open set and pushed into the closed set, as we will not be evaluating this node again.
+        Once we have found the best candidate in the open set, it is removed
+        from the open set and pushed into the closed set, as we will not be
+        evaluating this node again.
       </p>
       <p>
-        The next step is to check every neighbor of the current node. If the neighbor is already in the closed set, just ignore it, otherwise we need to do some calculations. We create a temporary new G score using the distance from the last node to the current node, and if this neighbor is in the open set, we compare the new temporary G to the old G, and take the lower of the two.
+        The next step is to check every neighbor of the current node. If the
+        neighbor is already in the closed set, just ignore it, otherwise we need
+        to do some calculations. We create a temporary new G score using the
+        distance from the last node to the current node, and if this neighbor is
+        in the open set, we compare the new temporary G to the old G, and take
+        the lower of the two.
       </p>
-      <p>If the neighbor is not in the open set, we give it that new G score, and push it into the open set. Finally, if the g score was updated, we calculate the H score of the neighbor using the distance from it to the end, and then calculate the new F score. Once we do that, we make sure that this node knows which node it came from. We can then know at any time what the current best path is, and at the end, we can go backwards from the end node to each of the previous nodes and know the optimal path</p>
-      <p>In the visualization tool, a red cell represents the closed set, a green cell represents the open set, and the path is drawn in pink.</p>
+      <p>
+        If the neighbor is not in the open set, we give it that new G score, and
+        push it into the open set. Finally, if the g score was updated, we
+        calculate the H score of the neighbor using the distance from it to the
+        end, and then calculate the new F score. Once we do that, we make sure
+        that this node knows which node it came from. We can then know at any
+        time what the current best path is, and at the end, we can go backwards
+        from the end node to each of the previous nodes and know the optimal
+        path
+      </p>
+      <p>
+        In the visualization tool, a red cell represents the closed set, a green
+        cell represents the open set, and the path is drawn in pink.
+      </p>
       <img src={AStar}></img>
+      <h4>Breadth First Search</h4>
+      <p>
+        Breadth First Search is a search algorithm that does not attempt to be
+        clever in how it finds the target. It is in most cases, extremely slow.
+        The idea behind it is that you create a queue starting with just the
+        start node, and a visited set to reference. You then loop through the
+        queue, starting with the first cell, and add it to the visited list.
+      </p>
+      <p>
+        You then check all neighbors of that cell for whether they are an
+        obsticle or they have already been visited. If so, just go to the start
+        of the loop, otherwise, add it to the visited set. You then check if it
+        has found the end, and if not, you add it to the open set and set the
+        previous cell to the parent. Once you have found the end, as with A* you
+        can backtrack to find the path.
+      </p>
+      <img src={Breadth}></img>
     </Fragment>
   )
 }

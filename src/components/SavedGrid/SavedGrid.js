@@ -7,6 +7,19 @@ import ResetBoardButton from '../Shared/ResetBoardButton'
 import RandomWallsButton from '../Shared/RandomWallsButton'
 import ResetWallsButton from '../Shared/ResetWallsButton'
 import AStarButton from '../Shared/AStarButton'
+import BreadthButton from '../Shared/BreadthButton'
+
+// -----------Shared functions
+import setStartAndEnd from '../../lib/setStartAndEnd'
+import beginAStar from '../../lib/beginAStar'
+import beginBreadth from '../../lib/beginBreadth'
+import findAllNeighbors from '../../lib/findAllNeighbors'
+import resetBoard from '../../lib/resetBoard'
+import checkForClicks from '../../lib/checkForClicks'
+
+import runBreadthFirst from '../../lib/runBreadthFirst'
+import runAStar from '../../lib/runAStar'
+
 // -----------Libraries
 import axios from 'axios'
 // -----------API URL
@@ -38,6 +51,17 @@ class SavedGrid extends Component {
   current
   scale = 10
   hasntBeenWarned = true
+
+  // shared modules -----------------
+  setStartAndEnd = setStartAndEnd.bind(this)
+  beginAStar = beginAStar.bind(this)
+  findAllNeighbors = findAllNeighbors.bind(this)
+  resetBoard = resetBoard.bind(this)
+  checkForClicks = checkForClicks.bind(this)
+  runAStar = runAStar.bind(this)
+  runBreadthFirst = runBreadthFirst.bind(this)
+  beginBreadth = beginBreadth.bind(this)
+
   // TODO: Make breakpoints to have this be responsive on mobile:
   // scale down and also make the canvas resize if the window is under a certain width
   // get the grid
@@ -75,17 +99,20 @@ class SavedGrid extends Component {
           }
         })
           .then(res => {
-          // set cells to the res data
+            // set cells to the res data
             this.cells = res.data.grid.walls
             this.updated = false
             // sets this components state using res data
-            this.setState({
-              found: true,
-              owned: res.data.grid.editable,
-              grid: { name: res.data.grid.name },
-              gridId: res.data.grid._id,
-              saved: false
-            }, () => this.p5.loop())
+            this.setState(
+              {
+                found: true,
+                owned: res.data.grid.editable,
+                grid: { name: res.data.grid.name },
+                gridId: res.data.grid._id,
+                saved: false
+              },
+              () => this.p5.loop()
+            )
           })
           .catch(console.error)
       })
@@ -178,64 +205,6 @@ class SavedGrid extends Component {
     }
   }
 
-  beginAStar = () => {
-    this.resetBoard()
-    this.cells.forEach(row => row.forEach(cell => cell.reset()))
-    this.findAllNeighbors()
-    this.openSet = []
-    this.closedSet = []
-    this.openSet.push(this.start)
-    this.start.open = true
-    this.setState({ algorithm: 'A*' })
-  }
-  // sets one cell to start and one cell to end the path
-  setStartAndEnd = () => {
-    this.start = this.cells[0][0]
-    this.end = this.cells[this.cols - 1][this.rows - 1]
-    this.start.start = true
-    this.end.end = true
-  }
-
-  // loop through all cells and run findNeighbors()
-  findAllNeighbors = () => {
-    this.cells.forEach(rowOfCells =>
-      rowOfCells.forEach(cell =>
-        cell.findNeighbors(this.cells, this.cols, this.rows)
-      )
-    )
-  }
-  // used for A*, approximation of dist between cell and end
-  heuristic = (a, b, p5) => {
-    return p5.dist(a.x, a.y, b.x, b.y)
-    // return Math.abs(a.i - b.i) + Math.abs(a.j - b.j)
-  }
-
-  removeFromArray = (arr, elt) => {
-    // loops through backwards so that the removal does not cause a
-    // skipped item
-    for (let i = arr.length - 1; i >= 0; i--) {
-      if (arr[i] === elt) arr.splice(i, 1)
-    }
-  }
-  // if algorithm hasnt started check grid for mouse press and change cells
-  // to walls if clicked
-  checkForClicks = p5 => {
-    if (p5.mouseIsPressed && !this.state.algorithm) {
-      const mouseX = p5.mouseX
-      const mouseY = p5.mouseY
-      for (let i = 0; i < this.cols; i++) {
-        for (let j = 0; j < this.rows; j++) {
-          this.cells[i][j].click(mouseX, mouseY)
-        }
-      }
-    }
-  }
-
-  // reset Algorithm and continue loop
-  resetBoard = () => {
-    this.path = []
-    this.setState({ algorithm: null })
-  }
   // End data manipulation --------------------------------
 
   // set up the canvas
@@ -261,103 +230,17 @@ class SavedGrid extends Component {
       this.updated = true
       for (let i = 0; i < this.cells.length; i++) {
         for (let j = 0; j < this.cells[i].length; j++) {
-          this.cells[i][j] = new Cell(
-            i,
-            j,
-            this.scale,
-            myP5,
-            this.cells[i][j]
-          )
+          this.cells[i][j] = new Cell(i, j, this.scale, myP5, this.cells[i][j])
         }
       }
       this.setStartAndEnd()
+      this.setState({ initiated: true })
     }
     p5.background(255)
 
     this.checkForClicks(p5)
-    const { openSet, closedSet, end } = this
-    const { algorithm } = this.state
-    // while the algo is A* and there are still cells in openSet
-    if (algorithm === 'A*') {
-      if (openSet.length > 0) {
-        let winner = 0
-        // find the lowest score in the openSet (closest cell to end)
-        for (let i = 0; i < openSet.length; i++) {
-          if (openSet[i].f < openSet[winner].f) winner = i
-        }
-
-        this.current = openSet[winner]
-        const { current } = this
-        // if we found the solution...
-        if (current === end) {
-          this.setState({ algorithm: null })
-        } else {
-          // Remove from open set and add to closed, setting attr for visuals
-          this.removeFromArray(openSet, current)
-          current.open = false
-
-          closedSet.push(current)
-          current.closed = true
-          // find al the neighbors of the closest cell
-          const neighbors = current.neighbors
-          // loop through neighbors
-
-          neighbors.forEach((neighbor) => {
-            // if it is in the closed set, skip it, it's already been calculated
-            if (!closedSet.includes(neighbor) && !neighbor.wall) {
-              // if not, the tentative g score for that neighbor is current+1
-              const tempG = current.g + this.heuristic(current, neighbor, p5)
-              let newPath = false
-              // if it's in the open set, check if the new g is better
-              // if so , set it
-              if (openSet.includes(neighbor)) {
-                if (tempG < neighbor.g) {
-                  neighbor.g = tempG
-                  newPath = true
-                }
-
-                // if not in open set, just set it's g score without the check, and push into open set
-              } else {
-                newPath = true
-                neighbor.g = tempG
-                openSet.push(neighbor)
-                neighbor.open = true
-              }
-              // no matter what, find the new best heuristic of this neighbor
-              // set the f score
-              // set the previous for the path
-              if (newPath) {
-                neighbor.h = this.heuristic(neighbor, end, p5)
-                neighbor.f = neighbor.g + neighbor.h
-                neighbor.previous = current
-              }
-            }
-          })
-        }
-      } else {
-        this.setState({ algorithm: null })
-
-        // no solution
-      }
-      // on all loops, calculate the current best path
-      this.path = []
-      let temp = this.current
-      this.path.push(temp)
-      while (temp.previous) {
-        this.path.push(temp.previous)
-        temp = temp.previous
-      }
-    }
-    // reset the previous of all cells so that the path doesn't accumulate
-    for (let i = 0; i < this.cells.length; i++) {
-      for (let j = 0; j < this.cells[i].length; j++) {
-        this.cells[i][j].path = false
-      }
-    }
-    // set path
-    for (let i = 0; i < this.path.length; i++) {
-      this.path[i].path = true
-    }
+    this.runAStar(p5)
+    this.runBreadthFirst(p5)
 
     // continual loop to show all cells based on their state
 
@@ -405,6 +288,8 @@ class SavedGrid extends Component {
 
           <div className="center">
             <AStarButton onClick={this.beginAStar} />
+            <BreadthButton className="col-md-3" onClick={this.beginBreadth} />
+
             <RandomWallsButton
               running={this.state.algorithm}
               cells={this.cells}
@@ -416,7 +301,6 @@ class SavedGrid extends Component {
               running={this.state.algorithm}
               cells={this.cells}
             />
-
           </div>
           <Sketch setup={this.setup} draw={this.draw} />
         </div>
