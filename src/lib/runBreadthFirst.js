@@ -26,6 +26,13 @@ const runBreadthFirst = function (p5) {
             neighbor.open = true
             neighbor.previous = current
           }
+          this.path = []
+          let temp = neighbor
+          this.path.push(temp)
+          while (temp.previous) {
+            this.path.push(temp.previous)
+            temp = temp.previous
+          }
         }
 
         for (let i = 0; i < this.cells.length; i++) {
@@ -34,13 +41,6 @@ const runBreadthFirst = function (p5) {
           }
         }
 
-        this.path = []
-        let temp = neighbor
-        this.path.push(temp)
-        while (temp.previous) {
-          this.path.push(temp.previous)
-          temp = temp.previous
-        }
         for (let i = 0; i < this.path.length; i++) {
           this.path[i].path = true
         }
