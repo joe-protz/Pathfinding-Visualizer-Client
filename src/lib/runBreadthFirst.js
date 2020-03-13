@@ -19,22 +19,30 @@ const runBreadthFirst = function (p5) {
           neighbor.closed = true
           if (neighbor === end) {
             neighbor.previous = current
-            this.path = []
-            let temp = neighbor
-            this.path.push(temp)
-            while (temp.previous) {
-              this.path.push(temp.previous)
-              temp = temp.previous
-            }
-            for (let i = 0; i < this.path.length; i++) {
-              this.path[i].path = true
-            }
+
             this.setState({ algorithm: null })
           } else {
             openSet.push(neighbor)
             neighbor.open = true
             neighbor.previous = current
           }
+        }
+
+        for (let i = 0; i < this.cells.length; i++) {
+          for (let j = 0; j < this.cells[i].length; j++) {
+            this.cells[i][j].path = false
+          }
+        }
+
+        this.path = []
+        let temp = neighbor
+        this.path.push(temp)
+        while (temp.previous) {
+          this.path.push(temp.previous)
+          temp = temp.previous
+        }
+        for (let i = 0; i < this.path.length; i++) {
+          this.path[i].path = true
         }
       })
     } else {
