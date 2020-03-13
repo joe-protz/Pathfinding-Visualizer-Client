@@ -13,9 +13,9 @@ const RandomWallsButton = props => {
           cell.wall = false
         }
       }))
+      start.wall = false
+      end.wall = false
     }
-    start.wall = false
-    end.wall = false
   }
   return <PrimaryButton onClick={selectWalls}>Random Walls</PrimaryButton>
 }

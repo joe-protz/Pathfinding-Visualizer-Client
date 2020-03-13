@@ -30,10 +30,10 @@ export default class Cell {
       p5.fill(200, 0, 200)
     } else if (wall) {
       p5.fill('#343A40')
-    } else if (closed) {
-      p5.fill(255, 0, 0, 50)
     } else if (open) {
       p5.fill(0, 255, 0, 50)
+    } else if (closed) {
+      p5.fill(255, 0, 0, 50)
     } else p5.fill(255)
 
     p5.noStroke()
