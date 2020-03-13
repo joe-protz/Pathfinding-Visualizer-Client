@@ -44,7 +44,7 @@ export default class Cell {
     if (
       this.p5.dist(mouseX - this.size, mouseY - this.size, this.x, this.y) <
       this.size / 2 &&
-      !this.recentlyClicked
+      !this.recentlyClicked && !this.start && !this.end
     ) {
       this.wall = !this.wall
       this.recentlyClicked = true
