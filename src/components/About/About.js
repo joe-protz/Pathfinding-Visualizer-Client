@@ -20,7 +20,7 @@ const About = props => {
         A* uses two data structures , an open set and a closed set. My algorithm
         uses arrays, but there are more efficient ways to do this. In the open
         set are all of the possible nodes that we will be evaluating on the next
-        loop. In the closed set are all nodes, or often nodes, that have already
+        loop. In the closed set are all nodes that have already
         been calculated and do not need to be checked again.
       </p>
       <p>
