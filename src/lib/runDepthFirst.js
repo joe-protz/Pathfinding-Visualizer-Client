@@ -6,9 +6,11 @@ const runDepthFirst = function (p5) {
 
   if (algorithm === 'depthFirst') {
     if (openSet.length > 0) {
+      // in depth first, openSet is a stack
+      // start by taking the top node off the stack
       const current = openSet.pop()
       current.open = false
-
+      // drawing the current path
       this.path = []
       let temp = current
       this.path.push(temp)
@@ -16,14 +18,17 @@ const runDepthFirst = function (p5) {
         this.path.push(temp.previous)
         temp = temp.previous
       }
+      // we found a solution
       if (current === end) {
         this.setState({ algorithm: null })
       }
+      // if the node has yet to be marked as discovered, mark it
       if (!closedSet.includes(current)) {
         closedSet.push(current)
         current.closed = true
       }
-
+      // if the neighbor if not a wall and is not in either stack, add it to
+      // the open stack
       const neighbors = current.neighbors
       neighbors.forEach(neighbor => {
         if (!neighbor.wall && !closedSet.includes(neighbor) && !openSet.includes(neighbor)) {
@@ -32,16 +37,6 @@ const runDepthFirst = function (p5) {
           neighbor.previous = current
         }
       })
-
-      for (let i = 0; i < this.cells.length; i++) {
-        for (let j = 0; j < this.cells[i].length; j++) {
-          this.cells[i][j].path = false
-        }
-      }
-
-      // for (let i = 0; i < this.path.length; i++) {
-      //   this.path[i].path = true
-      // }
     } else {
       // no solution
       this.setState({ algorithm: null })
