@@ -12,10 +12,12 @@ import resetBoard from '../../lib/resetBoard'
 import checkForClicks from '../../lib/checkForClicks'
 import beginBreadth from '../../lib/beginBreadth'
 import beginDepth from '../../lib/beginDepth'
+import beginDjikstra from '../../lib/beginDjikstra'
 
 import runDepthFirst from '../../lib/runDepthFirst'
 import runBreadthFirst from '../../lib/runBreadthFirst'
 import runAStar from '../../lib/runAStar'
+import runDjikstra from '../../lib/runDjikstra'
 // -----------Libraries
 import axios from 'axios'
 // -----------API URL
@@ -47,12 +49,17 @@ export default class NewGrid extends Component {
 
   // shared modules -----------------
   setStartAndEnd = setStartAndEnd.bind(this)
+
   beginAStar = beginAStar.bind(this)
   beginBreadth = beginBreadth.bind(this)
   beginDepth = beginDepth.bind(this)
+  beginDjikstra = beginDjikstra.bind(this)
+
   findAllNeighbors = findAllNeighbors.bind(this)
   resetBoard = resetBoard.bind(this)
   checkForClicks = checkForClicks.bind(this)
+
+  runDjikstra = runDjikstra.bind(this)
   runAStar = runAStar.bind(this)
   runBreadthFirst = runBreadthFirst.bind(this)
   runDepthFirst = runDepthFirst.bind(this)
@@ -136,6 +143,8 @@ export default class NewGrid extends Component {
     this.runAStar(p5)
     this.runBreadthFirst(p5)
     this.runDepthFirst(p5)
+    this.runDjikstra(p5)
+
     this.checkForClicks(p5)
 
     p5.noFill()
@@ -171,6 +180,7 @@ export default class NewGrid extends Component {
           beginAStar={this.beginAStar}
           beginBreadth={this.beginBreadth}
           beginDepth={this.beginDepth}
+          beginDjikstra={this.beginDjikstra}
           running={this.state.algorithm}
           cells={this.cells}
           start={this.start}
