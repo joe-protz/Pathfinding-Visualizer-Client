@@ -3,11 +3,7 @@ import { Redirect } from 'react-router-dom'
 import Sketch from 'react-p5'
 // -----------Shared
 import Cell from '../Shared/Cell'
-import ResetBoardButton from '../Shared/ResetBoardButton'
-import RandomWallsButton from '../Shared/RandomWallsButton'
-import ResetWallsButton from '../Shared/ResetWallsButton'
-import AStarButton from '../Shared/AStarButton'
-import BreadthButton from '../Shared/BreadthButton'
+import AllButtons from '../Shared/AllButtons'
 // ----------- Shared functions
 import setStartAndEnd from '../../lib/setStartAndEnd'
 import beginAStar from '../../lib/beginAStar'
@@ -15,7 +11,9 @@ import findAllNeighbors from '../../lib/findAllNeighbors'
 import resetBoard from '../../lib/resetBoard'
 import checkForClicks from '../../lib/checkForClicks'
 import beginBreadth from '../../lib/beginBreadth'
+import beginDepth from '../../lib/beginDepth'
 
+import runDepthFirst from '../../lib/runDepthFirst'
 import runBreadthFirst from '../../lib/runBreadthFirst'
 import runAStar from '../../lib/runAStar'
 // -----------Libraries
@@ -51,11 +49,13 @@ export default class NewGrid extends Component {
   setStartAndEnd = setStartAndEnd.bind(this)
   beginAStar = beginAStar.bind(this)
   beginBreadth = beginBreadth.bind(this)
+  beginDepth = beginDepth.bind(this)
   findAllNeighbors = findAllNeighbors.bind(this)
   resetBoard = resetBoard.bind(this)
   checkForClicks = checkForClicks.bind(this)
   runAStar = runAStar.bind(this)
   runBreadthFirst = runBreadthFirst.bind(this)
+  runDepthFirst = runDepthFirst.bind(this)
 
   // TODO: Make breakpoints to have this be responsive on mobile:
   // scale down and also make the canvas resize if the window is under a certain width
@@ -135,6 +135,7 @@ export default class NewGrid extends Component {
     }
     this.runAStar(p5)
     this.runBreadthFirst(p5)
+    this.runDepthFirst(p5)
     this.checkForClicks(p5)
 
     p5.noFill()
@@ -166,29 +167,16 @@ export default class NewGrid extends Component {
           owned={true}
           deleteGrid={false}
         />
-        <div className="center row">
-          <AStarButton className="col-md-3" onClick={this.beginAStar} />
-          <BreadthButton className="col-md-3" onClick={this.beginBreadth} />
-
-          <RandomWallsButton
-            className="col-md-3"
-            running={this.state.algorithm}
-            cells={this.cells}
-            start={this.start}
-            end={this.end}
-          />
-
-          <ResetBoardButton
-            className="col-md-3"
-            resetBoard={this.resetBoard}
-            cells={this.cells}
-          />
-          <ResetWallsButton
-            className="col-md-3"
-            running={this.state.algorithm}
-            cells={this.cells}
-          />
-        </div>
+        <AllButtons
+          beginAStar={this.beginAStar}
+          beginBreadth={this.beginBreadth}
+          beginDepth={this.beginDepth}
+          running={this.state.algorithm}
+          cells={this.cells}
+          start={this.start}
+          end={this.end}
+          resetBoard={this.resetBoard}
+        />
         <Sketch setup={this.setup} draw={this.draw} />
       </div>
     )

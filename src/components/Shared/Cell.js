@@ -17,15 +17,13 @@ export default class Cell {
     this.h = 0
     // color vars
     this.wall = wall || false
-    this.path = false
     this.closed = false
     this.open = false
     this.start = false
     this.end = false
   }
   show = () => {
-    const { p5, x, y, size, wall, path, closed, open, start, end } = this
-    if (path) return
+    const { p5, x, y, size, wall, closed, open, start, end } = this
     if (start || end) {
       p5.fill(200, 0, 200)
     } else if (wall) {
@@ -39,7 +37,8 @@ export default class Cell {
     p5.noStroke()
     p5.ellipse(x + size / 2, y + size / 2, size)
   }
-
+  // if the cell hasn't been clicked in the last second, toggle it's 'wall'
+  // property
   click = (mouseX, mouseY) => {
     if (
       this.p5.dist(mouseX - this.size, mouseY - this.size, this.x, this.y) <
@@ -62,6 +61,7 @@ export default class Cell {
   }
   findNeighbors = (cells, cols, rows) => {
     const { i, j } = this
+
     if (i < cols - 1) this.neighbors.push(cells[i + 1][j])
     if (i > 0) this.neighbors.push(cells[i - 1][j])
     if (j < rows - 1) this.neighbors.push(cells[i][j + 1])

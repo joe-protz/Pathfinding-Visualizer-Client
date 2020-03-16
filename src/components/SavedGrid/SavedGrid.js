@@ -3,22 +3,20 @@ import Sketch from 'react-p5'
 import { withRouter } from 'react-router-dom'
 // -----------Shared
 import Cell from '../Shared/Cell'
-import ResetBoardButton from '../Shared/ResetBoardButton'
-import RandomWallsButton from '../Shared/RandomWallsButton'
-import ResetWallsButton from '../Shared/ResetWallsButton'
-import AStarButton from '../Shared/AStarButton'
-import BreadthButton from '../Shared/BreadthButton'
+import AllButtons from '../Shared/AllButtons'
 
 // -----------Shared functions
 import setStartAndEnd from '../../lib/setStartAndEnd'
 import beginAStar from '../../lib/beginAStar'
 import beginBreadth from '../../lib/beginBreadth'
+import beginDepth from '../../lib/beginDepth'
 import findAllNeighbors from '../../lib/findAllNeighbors'
 import resetBoard from '../../lib/resetBoard'
 import checkForClicks from '../../lib/checkForClicks'
 
 import runBreadthFirst from '../../lib/runBreadthFirst'
 import runAStar from '../../lib/runAStar'
+import runDepthFirst from '../../lib/runDepthFirst'
 
 // -----------Libraries
 import axios from 'axios'
@@ -61,6 +59,9 @@ class SavedGrid extends Component {
   runAStar = runAStar.bind(this)
   runBreadthFirst = runBreadthFirst.bind(this)
   beginBreadth = beginBreadth.bind(this)
+  beginDepth = beginDepth.bind(this)
+
+  runDepthFirst = runDepthFirst.bind(this)
 
   // TODO: Make breakpoints to have this be responsive on mobile:
   // scale down and also make the canvas resize if the window is under a certain width
@@ -241,6 +242,7 @@ class SavedGrid extends Component {
     this.checkForClicks(p5)
     this.runAStar(p5)
     this.runBreadthFirst(p5)
+    this.runDepthFirst(p5)
 
     // continual loop to show all cells based on their state
 
@@ -286,22 +288,16 @@ class SavedGrid extends Component {
             deleteBool={deleteBool}
           />
 
-          <div className="center">
-            <AStarButton onClick={this.beginAStar} />
-            <BreadthButton className="col-md-3" onClick={this.beginBreadth} />
-
-            <RandomWallsButton
-              running={this.state.algorithm}
-              cells={this.cells}
-              start={this.start}
-              end={this.end}
-            />
-            <ResetBoardButton resetBoard={this.resetBoard} cells={this.cells} />
-            <ResetWallsButton
-              running={this.state.algorithm}
-              cells={this.cells}
-            />
-          </div>
+          <AllButtons
+            beginAStar={this.beginAStar}
+            beginBreadth={this.beginBreadth}
+            beginDepth={this.beginDepth}
+            running={this.state.algorithm}
+            cells={this.cells}
+            start={this.start}
+            end={this.end}
+            resetBoard={this.resetBoard}
+          />
           <Sketch setup={this.setup} draw={this.draw} />
         </div>
       )
