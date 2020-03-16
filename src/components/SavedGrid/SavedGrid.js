@@ -10,10 +10,13 @@ import setStartAndEnd from '../../lib/setStartAndEnd'
 import beginAStar from '../../lib/beginAStar'
 import beginBreadth from '../../lib/beginBreadth'
 import beginDepth from '../../lib/beginDepth'
+import beginDjikstra from '../../lib/beginDjikstra'
+
 import findAllNeighbors from '../../lib/findAllNeighbors'
 import resetBoard from '../../lib/resetBoard'
 import checkForClicks from '../../lib/checkForClicks'
 
+import runDjikstra from '../../lib/runDjikstra'
 import runBreadthFirst from '../../lib/runBreadthFirst'
 import runAStar from '../../lib/runAStar'
 import runDepthFirst from '../../lib/runDepthFirst'
@@ -60,6 +63,9 @@ class SavedGrid extends Component {
   runBreadthFirst = runBreadthFirst.bind(this)
   beginBreadth = beginBreadth.bind(this)
   beginDepth = beginDepth.bind(this)
+
+  beginDjikstra = beginDjikstra.bind(this)
+  runDjikstra = runDjikstra.bind(this)
 
   runDepthFirst = runDepthFirst.bind(this)
 
@@ -243,6 +249,7 @@ class SavedGrid extends Component {
     this.runAStar(p5)
     this.runBreadthFirst(p5)
     this.runDepthFirst(p5)
+    this.runDjikstra(p5)
 
     // continual loop to show all cells based on their state
 
@@ -292,6 +299,7 @@ class SavedGrid extends Component {
             beginAStar={this.beginAStar}
             beginBreadth={this.beginBreadth}
             beginDepth={this.beginDepth}
+            beginDjikstra={this.beginDjikstra}
             running={this.state.algorithm}
             cells={this.cells}
             start={this.start}
