@@ -93,3 +93,5 @@ In the future:
 - More pathfinding algorithms will be included
 - Favorites will be added
 - About page will explain more algorithms
+- Maze generation button
+- 'Pages' For a user to load 20 thumbnails at a time

@@ -34,16 +34,6 @@ const runBreadthFirst = function (p5) {
             temp = temp.previous
           }
         }
-
-        for (let i = 0; i < this.cells.length; i++) {
-          for (let j = 0; j < this.cells[i].length; j++) {
-            this.cells[i][j].path = false
-          }
-        }
-
-        for (let i = 0; i < this.path.length; i++) {
-          this.path[i].path = true
-        }
       })
     } else {
       this.setState({ algorithm: null })

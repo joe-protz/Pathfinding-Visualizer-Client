@@ -37,7 +37,7 @@ const Home = (props) => {
     if (myGrids.length > 0) { ownedOne = true }
     // owned grids
     ownedHtml = myGrids
-      .slice(0, 12)
+      .slice(0, 9)
       .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
       .map((grid, index) => (
         <Link className="col-md-4" key={grid.id} to={`/grids/${grid._id}`}>
@@ -52,7 +52,7 @@ const Home = (props) => {
       ))
     gridsFeed = grids
       .filter(grid => !grid.editable)
-      .slice(0, 12)
+      .slice(0, 9)
       .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
       .map((grid, index) => (
         <Link className="col-md-4" key={grid.id} to={`/grids/${grid._id}`}>

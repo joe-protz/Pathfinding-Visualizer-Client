@@ -74,16 +74,6 @@ const runAStar = function (p5) {
       this.path.push(temp.previous)
       temp = temp.previous
     }
-    // reset the previous of all cells so that the path doesn't accumulate
-    for (let i = 0; i < this.cells.length; i++) {
-      for (let j = 0; j < this.cells[i].length; j++) {
-        this.cells[i][j].path = false
-      }
-    }
-    // set path
-    for (let i = 0; i < this.path.length; i++) {
-      this.path[i].path = true
-    }
   }
 }
 

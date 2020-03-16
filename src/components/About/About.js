@@ -27,7 +27,7 @@ const About = props => {
       </p>
       <p>
         The open set starts with just the start node. We begin by checking if
-        the node is the end node. If so, great were done! If not, continue.a1 We
+        the node is the end node. If so, great were done! If not, continue. We
         then loop through the open set to find the node with the lowest F score.
       </p>
       <p>
@@ -73,7 +73,7 @@ const About = props => {
       </p>
       <p>
         You then check all neighbors of that cell for whether they are an
-        obsticle or they have already been visited. If so, just go to the start
+        obstacle or they have already been visited. If so, just go to the start
         of the loop, otherwise, add it to the visited set. You then check if it
         has found the end, and if not, you add it to the open set and set the
         previous cell to the parent. Once you have found the end, as with A* you
