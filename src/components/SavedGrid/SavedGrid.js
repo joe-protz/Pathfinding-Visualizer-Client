@@ -3,12 +3,7 @@ import Sketch from 'react-p5'
 import { withRouter } from 'react-router-dom'
 // -----------Shared
 import Cell from '../Shared/Cell'
-import ResetBoardButton from '../Shared/ResetBoardButton'
-import RandomWallsButton from '../Shared/RandomWallsButton'
-import ResetWallsButton from '../Shared/ResetWallsButton'
-import AStarButton from '../Shared/AStarButton'
-import BreadthButton from '../Shared/BreadthButton'
-import DepthButton from '../Shared/DepthButton'
+import AllButtons from '../Shared/AllButtons'
 
 // -----------Shared functions
 import setStartAndEnd from '../../lib/setStartAndEnd'
@@ -293,23 +288,16 @@ class SavedGrid extends Component {
             deleteBool={deleteBool}
           />
 
-          <div className="center row">
-            <AStarButton onClick={this.beginAStar} />
-            <BreadthButton className="col-md-3" onClick={this.beginBreadth} />
-            <DepthButton className="col-md-3" onClick={this.beginDepth} />
-
-            <RandomWallsButton
-              running={this.state.algorithm}
-              cells={this.cells}
-              start={this.start}
-              end={this.end}
-            />
-            <ResetBoardButton resetBoard={this.resetBoard} cells={this.cells} />
-            <ResetWallsButton
-              running={this.state.algorithm}
-              cells={this.cells}
-            />
-          </div>
+          <AllButtons
+            beginAStar={this.beginAStar}
+            beginBreadth={this.beginBreadth}
+            beginDepth={this.beginDepth}
+            running={this.state.algorithm}
+            cells={this.cells}
+            start={this.start}
+            end={this.end}
+            resetBoard={this.resetBoard}
+          />
           <Sketch setup={this.setup} draw={this.draw} />
         </div>
       )

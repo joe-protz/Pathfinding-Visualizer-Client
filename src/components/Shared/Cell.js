@@ -61,6 +61,12 @@ export default class Cell {
   }
   findNeighbors = (cells, cols, rows) => {
     const { i, j } = this
+
+    if (i < cols - 1) this.neighbors.push(cells[i + 1][j])
+    if (i > 0) this.neighbors.push(cells[i - 1][j])
+    if (j < rows - 1) this.neighbors.push(cells[i][j + 1])
+    if (j > 0) this.neighbors.push(cells[i][j - 1])
+    // Diagonals below--------------------------------------------
     if (i > 0 && j > 0) {
       this.neighbors.push(cells[i - 1][j - 1])
     }
@@ -73,10 +79,5 @@ export default class Cell {
     if (i < cols - 1 && j < rows - 1) {
       this.neighbors.push(cells[i + 1][j + 1])
     }
-    if (i < cols - 1) this.neighbors.push(cells[i + 1][j])
-    if (i > 0) this.neighbors.push(cells[i - 1][j])
-    if (j < rows - 1) this.neighbors.push(cells[i][j + 1])
-    if (j > 0) this.neighbors.push(cells[i][j - 1])
-    // Diagonals below--------------------------------------------
   }
 }
