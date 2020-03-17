@@ -4,6 +4,7 @@ import Sketch from 'react-p5'
 // -----------Shared
 import Cell from '../Shared/Cell'
 import AllButtons from '../Shared/AllButtons'
+import Legend from '../Shared/Legend'
 // ----------- Shared functions
 import setStartAndEnd from '../../lib/setStartAndEnd'
 import beginAStar from '../../lib/beginAStar'
@@ -80,13 +81,14 @@ export default class NewGrid extends Component {
   saveGrid = event => {
     event.preventDefault()
     const name = this.state.grid.name
-    const map = this.cells.map(row =>
+    const walls = this.cells.map(row =>
       row.map(cell => cell.wall)
     )
+    const weights = this.cells.map(row => row.map(cell => cell.weighted))
     axios({
       url: `${apiUrl}/grids`,
       method: 'POST',
-      data: { grid: { walls: map, name: name } },
+      data: { grid: { walls: walls, name: name, weights: weights } },
       headers: {
         Authorization: `Bearer ${this.props.user.token}`
       }
@@ -187,7 +189,10 @@ export default class NewGrid extends Component {
           end={this.end}
           resetBoard={this.resetBoard}
         />
-        <Sketch setup={this.setup} draw={this.draw} />
+        <div className = 'row'>
+          <Legend />
+          <Sketch className = 'col-9 react-p5' setup={this.setup} draw={this.draw} />
+        </div>
       </div>
     )
   }

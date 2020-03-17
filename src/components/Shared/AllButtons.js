@@ -1,7 +1,8 @@
 import React from 'react'
 import ResetBoardButton from './ResetBoardButton'
 import RandomWallsButton from './RandomWallsButton'
-import ResetWallsButton from './ResetWallsButton'
+import RandomWeightsButton from './RandomWeightsButton'
+import ResetCellsButton from './ResetCellsButton'
 import AStarButton from './AStarButton'
 import BreadthButton from './BreadthButton'
 import DepthButton from './DepthButton'
@@ -22,13 +23,20 @@ const AllButtons = props => {
         start={start}
         end={end}
       />
+      <RandomWeightsButton
+        className="col-md-3"
+        running={running}
+        cells={cells}
+        start={start}
+        end={end}
+      />
 
       <ResetBoardButton
         className="col-md-3"
         resetBoard={resetBoard}
         cells={cells}
       />
-      <ResetWallsButton className="col-md-3" running={running} cells={cells} />
+      <ResetCellsButton className="col-md-3" running={running} cells={cells} />
     </div>
   )
 }

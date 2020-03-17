@@ -20,7 +20,8 @@ const runDjikstra = function (p5) {
         // if it is in the closed set, skip it, it's already been calculated
         if (!closedSet.includes(neighbor) && !neighbor.wall) {
           // if not, the tentative d score for that neighbor is current+1
-          const tempD = current.d + heuristic(current, neighbor, p5)
+          let tempD = current.d + heuristic(current, neighbor, p5)
+          if (neighbor.weighted) { tempD += 30 }
           if (openSet.includes(neighbor)) {
             if (tempD < neighbor.d) {
               neighbor.d = tempD
