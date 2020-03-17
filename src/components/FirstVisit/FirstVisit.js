@@ -15,6 +15,7 @@ class FirstVisit extends Component {
       .catch(() => console.error(this.props.user))
   }
   componentWillUnmount () {
+    // axios call to set the users firstVisit to false
     this.props.updateUser()
   }
   render () {

@@ -31,9 +31,11 @@ const Home = (props) => {
   let ownedOne = false
   let ownedHtml
   let gridsFeed
-
+  // if there is a user and there is  at least one grid
   if (user && grids[0]) {
+    // find all user's grids
     const myGrids = grids.filter(grid => grid.editable)
+    // set the ownedOne var to true
     if (myGrids.length > 0) { ownedOne = true }
     // owned grids
     ownedHtml = myGrids
@@ -50,6 +52,7 @@ const Home = (props) => {
           />
         </Link>
       ))
+      // all community grids
     gridsFeed = grids
       .filter(grid => !grid.editable)
       .slice(0, 9)
@@ -66,10 +69,12 @@ const Home = (props) => {
         </Link>
       ))
   }
+  // if the user is logged in and has never visited
   if (user && user.firstTime) {
     return (
       <FirstVisit updateUser={updateUser} gridsFeed={gridsFeed}user={user}/>
     )
+    // otherwise, if there are any grids
   } else if (grids[0]) {
     return (
       <div className="allGrids">
@@ -108,6 +113,7 @@ const Home = (props) => {
     return (
       'Loading...'
     )
+    // if no user, show welcome component
   } else return (<Welcome/>)
 }
 

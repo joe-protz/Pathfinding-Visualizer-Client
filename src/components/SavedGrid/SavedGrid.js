@@ -4,6 +4,7 @@ import { withRouter } from 'react-router-dom'
 // -----------Shared
 import Cell from '../Shared/Cell'
 import AllButtons from '../Shared/AllButtons'
+import Legend from '../Shared/Legend'
 
 // -----------Shared functions
 import setStartAndEnd from '../../lib/setStartAndEnd'
@@ -47,6 +48,7 @@ class SavedGrid extends Component {
   path = []
   end
   cells
+  weights
   cols
   rows
   current
@@ -83,6 +85,7 @@ class SavedGrid extends Component {
       .then(res => {
         // set cells to the res data
         this.cells = res.data.grid.walls
+        this.weights = res.data.grid.weights
 
         // sets this components state using res data
         this.setState({
@@ -108,6 +111,7 @@ class SavedGrid extends Component {
           .then(res => {
             // set cells to the res data
             this.cells = res.data.grid.walls
+            this.walls = res.data.grid.weights
             this.updated = false
             // sets this components state using res data
             this.setState(
@@ -141,11 +145,12 @@ class SavedGrid extends Component {
   updateGrid = event => {
     event.preventDefault()
     const name = this.state.grid.name
-    const map = this.cells.map(row => row.map(cell => cell.wall))
+    const walls = this.cells.map(row => row.map(cell => cell.wall))
+    const weights = this.cells.map(row => row.map(cell => cell.weighted))
     axios({
       url: `${apiUrl}/grids/` + this.props.match.params.id,
       method: 'PATCH',
-      data: { grid: { walls: map, name: name } },
+      data: { grid: { walls: walls, name: name, weights: weights } },
       headers: {
         Authorization: `Bearer ${this.props.user.token}`
       }
@@ -170,11 +175,13 @@ class SavedGrid extends Component {
   saveAsNew = event => {
     event.preventDefault()
     const name = this.state.grid.name
-    const map = this.cells.map(row => row.map(cell => cell.wall))
+    const walls = this.cells.map(row => row.map(cell => cell.wall))
+    const weights = this.cells.map(row => row.map(cell => cell.weighted))
+
     axios({
       url: `${apiUrl}/grids`,
       method: 'POST',
-      data: { grid: { walls: map, name: name } },
+      data: { grid: { walls: walls, name: name, weights: weights } },
       headers: {
         Authorization: `Bearer ${this.props.user.token}`
       }
@@ -237,7 +244,11 @@ class SavedGrid extends Component {
       this.updated = true
       for (let i = 0; i < this.cells.length; i++) {
         for (let j = 0; j < this.cells[i].length; j++) {
-          this.cells[i][j] = new Cell(i, j, this.scale, myP5, this.cells[i][j])
+          let weighted = false
+          if (this.weights) {
+            weighted = this.weights[i][j]
+          }
+          this.cells[i][j] = new Cell(i, j, this.scale, myP5, this.cells[i][j], weighted)
         }
       }
       this.setStartAndEnd()
@@ -306,7 +317,14 @@ class SavedGrid extends Component {
             end={this.end}
             resetBoard={this.resetBoard}
           />
-          <Sketch setup={this.setup} draw={this.draw} />
+          <div className="row">
+            <Legend />
+            <Sketch
+              className="col-9 react-p5"
+              setup={this.setup}
+              draw={this.draw}
+            />
+          </div>
         </div>
       )
     } else {

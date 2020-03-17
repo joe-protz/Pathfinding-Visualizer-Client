@@ -33,7 +33,8 @@ const runAStar = function (p5) {
         // if it is in the closed set, skip it, it's already been calculated
           if (!closedSet.includes(neighbor) && !neighbor.wall) {
           // if not, the tentative g score for that neighbor is current+1
-            const tempG = current.g + heuristic(current, neighbor, p5)
+            let tempG = current.g + heuristic(current, neighbor, p5)
+            if (neighbor.weighted) tempG += 30
             let newPath = false
             // if it's in the open set, check if the new g is better
             // if so , set it
