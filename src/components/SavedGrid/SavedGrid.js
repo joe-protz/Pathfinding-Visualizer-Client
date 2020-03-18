@@ -3,22 +3,26 @@ import Sketch from 'react-p5'
 import { withRouter } from 'react-router-dom'
 // -----------Shared
 import Cell from '../Shared/Cell'
-import ResetBoardButton from '../Shared/ResetBoardButton'
-import RandomWallsButton from '../Shared/RandomWallsButton'
-import ResetWallsButton from '../Shared/ResetWallsButton'
-import AStarButton from '../Shared/AStarButton'
-import BreadthButton from '../Shared/BreadthButton'
+import AllButtons from '../Shared/AllButtons'
+import Legend from '../Shared/Legend'
 
-// -----------Shared functions
+// ----------- Shared functions
+// helpers
 import setStartAndEnd from '../../lib/setStartAndEnd'
-import beginAStar from '../../lib/beginAStar'
-import beginBreadth from '../../lib/beginBreadth'
 import findAllNeighbors from '../../lib/findAllNeighbors'
 import resetBoard from '../../lib/resetBoard'
 import checkForClicks from '../../lib/checkForClicks'
-
+// used for algorithm setting
+import beginAStar from '../../lib/beginAStar'
+import beginBreadth from '../../lib/beginBreadth'
+import beginDepth from '../../lib/beginDepth'
+import beginDjikstra from '../../lib/beginDjikstra'
+import begin from '../../lib/begin'
+// actual algorithm code
+import runDepthFirst from '../../lib/runDepthFirst'
 import runBreadthFirst from '../../lib/runBreadthFirst'
 import runAStar from '../../lib/runAStar'
+import runDjikstra from '../../lib/runDjikstra'
 
 // -----------Libraries
 import axios from 'axios'
@@ -36,7 +40,8 @@ class SavedGrid extends Component {
       deleted: false,
       initiated: false,
       algorithm: null,
-      saved: false
+      saved: false,
+      start: false
     }
   }
   // variables are initialized outside of the constructor if they're used with sketch
@@ -46,6 +51,7 @@ class SavedGrid extends Component {
   path = []
   end
   cells
+  weights
   cols
   rows
   current
@@ -61,6 +67,13 @@ class SavedGrid extends Component {
   runAStar = runAStar.bind(this)
   runBreadthFirst = runBreadthFirst.bind(this)
   beginBreadth = beginBreadth.bind(this)
+  beginDepth = beginDepth.bind(this)
+
+  begin = begin.bind(this)
+  beginDjikstra = beginDjikstra.bind(this)
+  runDjikstra = runDjikstra.bind(this)
+
+  runDepthFirst = runDepthFirst.bind(this)
 
   // TODO: Make breakpoints to have this be responsive on mobile:
   // scale down and also make the canvas resize if the window is under a certain width
@@ -76,6 +89,7 @@ class SavedGrid extends Component {
       .then(res => {
         // set cells to the res data
         this.cells = res.data.grid.walls
+        this.weights = res.data.grid.weights
 
         // sets this components state using res data
         this.setState({
@@ -101,6 +115,7 @@ class SavedGrid extends Component {
           .then(res => {
             // set cells to the res data
             this.cells = res.data.grid.walls
+            this.weights = res.data.grid.weights
             this.updated = false
             // sets this components state using res data
             this.setState(
@@ -134,11 +149,12 @@ class SavedGrid extends Component {
   updateGrid = event => {
     event.preventDefault()
     const name = this.state.grid.name
-    const map = this.cells.map(row => row.map(cell => cell.wall))
+    const walls = this.cells.map(row => row.map(cell => cell.wall))
+    const weights = this.cells.map(row => row.map(cell => cell.weighted))
     axios({
       url: `${apiUrl}/grids/` + this.props.match.params.id,
       method: 'PATCH',
-      data: { grid: { walls: map, name: name } },
+      data: { grid: { walls: walls, name: name, weights: weights } },
       headers: {
         Authorization: `Bearer ${this.props.user.token}`
       }
@@ -163,11 +179,13 @@ class SavedGrid extends Component {
   saveAsNew = event => {
     event.preventDefault()
     const name = this.state.grid.name
-    const map = this.cells.map(row => row.map(cell => cell.wall))
+    const walls = this.cells.map(row => row.map(cell => cell.wall))
+    const weights = this.cells.map(row => row.map(cell => cell.weighted))
+
     axios({
       url: `${apiUrl}/grids`,
       method: 'POST',
-      data: { grid: { walls: map, name: name } },
+      data: { grid: { walls: walls, name: name, weights: weights } },
       headers: {
         Authorization: `Bearer ${this.props.user.token}`
       }
@@ -230,18 +248,24 @@ class SavedGrid extends Component {
       this.updated = true
       for (let i = 0; i < this.cells.length; i++) {
         for (let j = 0; j < this.cells[i].length; j++) {
-          this.cells[i][j] = new Cell(i, j, this.scale, myP5, this.cells[i][j])
+          let weighted = false
+          if (this.weights) {
+            weighted = this.weights[i][j]
+          }
+          this.cells[i][j] = new Cell(i, j, this.scale, myP5, this.cells[i][j], weighted)
         }
       }
       this.setStartAndEnd()
       this.setState({ initiated: true })
     }
     p5.background(255)
-
+    if (this.state.start) {
+      this.runAStar(p5)
+      this.runBreadthFirst(p5)
+      this.runDepthFirst(p5)
+      this.runDjikstra(p5)
+    }
     this.checkForClicks(p5)
-    this.runAStar(p5)
-    this.runBreadthFirst(p5)
-
     // continual loop to show all cells based on their state
 
     for (let i = 0; i < this.cells.length; i++) {
@@ -286,23 +310,28 @@ class SavedGrid extends Component {
             deleteBool={deleteBool}
           />
 
-          <div className="center">
-            <AStarButton onClick={this.beginAStar} />
-            <BreadthButton className="col-md-3" onClick={this.beginBreadth} />
-
-            <RandomWallsButton
-              running={this.state.algorithm}
-              cells={this.cells}
-              start={this.start}
-              end={this.end}
-            />
-            <ResetBoardButton resetBoard={this.resetBoard} cells={this.cells} />
-            <ResetWallsButton
-              running={this.state.algorithm}
-              cells={this.cells}
+          <AllButtons
+            algorithm={this.state.algorithm}
+            beginAStar={this.beginAStar}
+            beginBreadth={this.beginBreadth}
+            beginDepth={this.beginDepth}
+            beginDjikstra={this.beginDjikstra}
+            running={this.state.start}
+            cells={this.cells}
+            start={this.start}
+            end={this.end}
+            resetBoard={this.resetBoard}
+            begin={this.begin}
+            msgAlert={this.props.msgAlert}
+          />
+          <div className="row">
+            <Legend />
+            <Sketch
+              className="col-9 react-p5"
+              setup={this.setup}
+              draw={this.draw}
             />
           </div>
-          <Sketch setup={this.setup} draw={this.draw} />
         </div>
       )
     } else {

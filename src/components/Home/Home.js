@@ -27,18 +27,20 @@ const Home = (props) => {
     }
   }, [])
 
-  // If the user is signed in, map over the grids, otherwise just display a welcome component (html for now) ---------------
+  // If the user is signed in, map over the grids, otherwise just display a welcome component
   let ownedOne = false
   let ownedHtml
   let gridsFeed
-
+  // if there is a user and there is  at least one grid
   if (user && grids[0]) {
+    // find all user's grids
     const myGrids = grids.filter(grid => grid.editable)
+    // set the ownedOne var to true
     if (myGrids.length > 0) { ownedOne = true }
-    // owned grids
+    // create thumbnail grid for owned grids
     ownedHtml = myGrids
-      .slice(0, 12)
       .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+      .slice(0, 9)
       .map((grid, index) => (
         <Link className="col-md-4" key={grid.id} to={`/grids/${grid._id}`}>
           <ThumbnailGrid
@@ -50,10 +52,11 @@ const Home = (props) => {
           />
         </Link>
       ))
+      // create thumbnail grid for 9 recent community grids
     gridsFeed = grids
       .filter(grid => !grid.editable)
-      .slice(0, 12)
       .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+      .slice(0, 9)
       .map((grid, index) => (
         <Link className="col-md-4" key={grid.id} to={`/grids/${grid._id}`}>
           <ThumbnailGrid
@@ -66,13 +69,16 @@ const Home = (props) => {
         </Link>
       ))
   }
+  // if the user is logged in and has never visited
   if (user && user.firstTime) {
     return (
       <FirstVisit updateUser={updateUser} gridsFeed={gridsFeed}user={user}/>
     )
+    // otherwise, if there are any grids
   } else if (grids[0]) {
     return (
       <div className="allGrids">
+        {/* as long as the user owns one grid */}
         {user && ownedOne && (
           <Link to={'/new_grid'}>
             <PrimaryButton>New Grid</PrimaryButton>
@@ -86,6 +92,7 @@ const Home = (props) => {
             <h2>Here are your most recent grids</h2>
           </span>
         )}
+        {/* special button for user's with no grids */}
         {!ownedOne && (
           <Link to={'/new_grid'}>
             <PrimaryButton className={'btn btn-primary'}>
@@ -93,21 +100,25 @@ const Home = (props) => {
             </PrimaryButton>
           </Link>
         )}
+        {/* show  owned grids and community grids */}
         <div className="row">{ownedHtml}</div>
         {user && <h2>Here are some recently made community grids!</h2>}
         <div className="row">{gridsFeed}</div>
       </div>
     )
+    // if user logs in and there are 0 grids, everybody must have deleted theirs and a special message is needed
   } else if (!grids.length && user) {
     return (
       <Link to={'/new_grid'}>
         <PrimaryButton>Wow you are the first user, click here to create a grid!</PrimaryButton>
       </Link>
     )
+    // if the axios req hasnt finished
   } else if (user) {
     return (
       'Loading...'
     )
+    // if no user(logged out), show welcome component
   } else return (<Welcome/>)
 }
 

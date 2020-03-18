@@ -1,85 +1,76 @@
 import React, { Fragment } from 'react'
-import AStar from '../../images/Example.png'
-import Breadth from '../../images/Breadth.png'
-
+import AStar from '../../images/A.png'
+import Breadth from '../../images/BreadthWithWght.png'
+import Djikstra from '../../images/Djikstra.png'
+import Depth from '../../images/Depth.png'
+import Legend from '../../components/Shared/Legend'
 const About = props => {
   return (
     <Fragment>
       <h3>About!</h3>
       <p>
         This app is intended to be a fun way to visualize how search algorithms
-        work. Here is a brief summary of each.
+        work. Here is a brief summary of each. In each set, you can consider a
+        nodes marked closed as nodes who have already been visited. Nodes marked
+        as open are in the current set being evaluated.
       </p>
-      <h4>A*</h4>
-      <p>
-        A* is a search algorithm that is based off of Dijkstras Algorithm, which
-        was less efficient. A* achieves this efficiency by using a heuristic
-        approach, where every loop the algorithm is checking to see the next
-        closest neighbor and going from there, where in Djikstras algorithm you
-        search every possibility until you find the shortest path.
-      </p>
-      <p>
-        A* uses two data structures , an open set and a closed set. My algorithm
-        uses arrays, but there are more efficient ways to do this. In the open
-        set are all of the possible nodes that we will be evaluating on the next
-        loop. In the closed set are all nodes that have already been calculated
-        and do not need to be checked again.
-      </p>
-      <p>
-        The open set starts with just the start node. We begin by checking if
-        the node is the end node. If so, great were done! If not, continue.a1 We
-        then loop through the open set to find the node with the lowest F score.
-      </p>
-      <p>
-        F score is derived from the formula F = G + H, where G is how long it
-        took to get to your current position, and H is an educated guess at how
-        long it will take to get to the end.
-      </p>
-      <p>
-        Once we have found the best candidate in the open set, it is removed
-        from the open set and pushed into the closed set, as we will not be
-        evaluating this node again.
-      </p>
-      <p>
-        The next step is to check every neighbor of the current node. If the
-        neighbor is already in the closed set, just ignore it, otherwise we need
-        to do some calculations. We create a temporary new G score using the
-        distance from the last node to the current node, and if this neighbor is
-        in the open set, we compare the new temporary G to the old G, and take
-        the lower of the two.
-      </p>
-      <p>
-        If the neighbor is not in the open set, we give it that new G score, and
-        push it into the open set. Finally, if the g score was updated, we
-        calculate the H score of the neighbor using the distance from it to the
-        end, and then calculate the new F score. Once we do that, we make sure
-        that this node knows which node it came from. We can then know at any
-        time what the current best path is, and at the end, we can go backwards
-        from the end node to each of the previous nodes and know the optimal
-        path
-      </p>
-      <p>
-        In the visualization tool, a red cell represents the closed set, a green
-        cell represents the open set, and the path is drawn in pink.
-      </p>
-      <img src={AStar}></img>
+      <Legend />
       <h4>Breadth First Search</h4>
       <p>
         Breadth First Search is a search algorithm that does not attempt to be
         clever in how it finds the target. It is in most cases, extremely slow.
         The idea behind it is that you create a queue starting with just the
-        start node, and a visited set to reference. You then loop through the
-        queue, starting with the first cell, and add it to the visited list.
+        start node, and then as you search you add each neighbor to the top of
+        the queue. In this way, we are sure to check ALL neighbors of a single
+        node before moving on. You can think of it as simply checking all
+        possible neighbors before moving deeper by a single level.
       </p>
       <p>
-        You then check all neighbors of that cell for whether they are an
-        obsticle or they have already been visited. If so, just go to the start
-        of the loop, otherwise, add it to the visited set. You then check if it
-        has found the end, and if not, you add it to the open set and set the
-        previous cell to the parent. Once you have found the end, as with A* you
-        can backtrack to find the path.
+        Breadth first search will not take into account the cost of getting from
+        one node to another, so in the case of this app, you will see no matter
+        how much terrain you add, it will not change the path at all. In other
+        words, it is a brute force search to find any solution. In the picture
+        below, note that it simply passed straight through the dark red nodes
+        instead of going around.
       </p>
       <img src={Breadth}></img>
+      <h4>Depth First Search</h4>
+      <p>
+        Depth First search is very similar to Breadth first, except for instead
+        of searching as wide as possible, it attempts to go as deep as possible
+        until finding the target or getting stuck. If it gets stuck it will
+        backtrack until it finds an unvisited neighbor, and then go as deep as
+        possible from there. Instead of a queue, it has a stack, where each
+        neighbor is added to the stack as you go.
+      </p>
+
+      <p>
+        Just like Breadth first search, take note that while it does avoid
+        obstacles, it does not care about terrain or an optimal solution, it is
+        a brute force algorithm that is very inefficient.
+      </p>
+      <img src={Depth}></img>
+      <h4>Djikstra Shortest Path</h4>
+      <p>
+        With Djikstra&apos;s Shortest Path algorithm, we finally make some
+        progress towards being smart with how we search. Djiksta&apos; s
+        Algorithm will always find the , or one of, the shortest path(s). It
+        does this by using the distance that it took to get to each neighbor
+        starting from the beginning. In this way, we know that if we find a
+        shorter way to get to the same node, we can update it&apos;s distance and where it came from to reflect this shortest path. In addition, this algorithm is able to consider cost of getting to each node. So in this implementation, every weighted cell will add 30 to the cost needed to traverse through. For reference, going up and down a normal cell will cost 10, and a diagonal will cost 14. You can see below, that while the algorithm still had to search nearly as much as the previous two, it found a much shorter path by going around the dark red cells. You could consider these cells like a traffic jam on a highway, where the distance is lower, but the time it would take is longer.
+      </p>
+      <img src={Djikstra}></img>
+
+      <h4>A*</h4>
+      <p>
+        A* is a search algorithm that aims to extend Dijkstra&apos;s Algorithm,
+        which was less efficient. A* achieves this efficiency by using a
+        heuristic approach, where in addition to knowing how long it took to get to the current node, it will take a guess as to how far away it is from the end. In every loop the algorithm is checking to see
+        which node has the best odds of taking you to the shortest path, and going from there. You can see below, that not only did it find the shortest path, but it also had a much smaller closed set, represented by red and light red cells.
+
+      </p>
+
+      <img src={AStar}></img>
     </Fragment>
   )
 }

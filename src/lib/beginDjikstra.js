@@ -1,5 +1,5 @@
 // initiate and allow A* to run in 'draw'
-const beginBreadth = function () {
+const beginDjikstra = function () {
   this.resetBoard()
   this.cells.forEach(row => row.forEach(cell => cell.reset()))
   this.findAllNeighbors()
@@ -7,7 +7,8 @@ const beginBreadth = function () {
   this.closedSet = []
   this.openSet.push(this.start)
   this.start.open = true
-  this.setState({ algorithm: 'Breadth First' })
+  this.start.d = 0
+  this.setState({ algorithm: 'Djikstra' })
 }
 
-export default beginBreadth
+export default beginDjikstra

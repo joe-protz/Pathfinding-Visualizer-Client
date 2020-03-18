@@ -8,6 +8,7 @@ import axios from 'axios'
 // -----------API URL
 import apiUrl from '../../apiConfig'
 
+// Used to generate a thumbnail of a users grid, only does one draw loop
 class ThumbnailGrid extends Component {
   constructor () {
     super()
@@ -20,6 +21,7 @@ class ThumbnailGrid extends Component {
 
   updated = false
   cells = []
+  walls
   cols
   rows
   scale = 2
@@ -35,6 +37,7 @@ class ThumbnailGrid extends Component {
       .then(res => {
         // set cells to the res data
         this.cells = res.data.grid.walls
+        this.walls = res.data.grid.weights
         // sets this components state using res data
         this.setState({
           found: true,
@@ -67,12 +70,15 @@ class ThumbnailGrid extends Component {
       this.updated = true
       for (let i = 0; i < this.cells.length; i++) {
         for (let j = 0; j < this.cells[i].length; j++) {
+          let weighted = false
+          if (this.walls) { weighted = this.walls[i][j] }
           this.cells[i][j] = new Cell(
             i,
             j,
             this.scale,
             myP5,
-            this.cells[i][j]
+            this.cells[i][j],
+            weighted
           )
         }
       }

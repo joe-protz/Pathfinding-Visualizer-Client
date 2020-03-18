@@ -2,9 +2,12 @@
 import heuristic from './heuristic'
 import removeFromArray from './removeFromArray'
 
+// runs the A* Algorithm and animates it, must pass in p5 from the grid component to allow drawing capabilities
+
 const runAStar = function (p5) {
   const { openSet, closedSet, end } = this
   const { algorithm } = this.state
+
   if (algorithm === 'A*') {
     if (openSet.length > 0) {
       let winner = 0
@@ -17,7 +20,7 @@ const runAStar = function (p5) {
       const { current } = this
       // if we found the solution...
       if (current === end) {
-        this.setState({ algorithm: null })
+        this.setState({ start: false })
       } else {
       // Remove from open set and add to closed, setting attr for visuals
         removeFromArray(openSet, current)
@@ -33,7 +36,8 @@ const runAStar = function (p5) {
         // if it is in the closed set, skip it, it's already been calculated
           if (!closedSet.includes(neighbor) && !neighbor.wall) {
           // if not, the tentative g score for that neighbor is current+1
-            const tempG = current.g + heuristic(current, neighbor, p5)
+            let tempG = current.g + heuristic(current, neighbor, p5)
+            if (neighbor.weighted) tempG += 30
             let newPath = false
             // if it's in the open set, check if the new g is better
             // if so , set it
@@ -62,7 +66,7 @@ const runAStar = function (p5) {
         })
       }
     } else {
-      this.setState({ algorithm: null })
+      this.setState({ start: false })
 
     // no solution
     }
@@ -73,16 +77,6 @@ const runAStar = function (p5) {
     while (temp.previous) {
       this.path.push(temp.previous)
       temp = temp.previous
-    }
-    // reset the previous of all cells so that the path doesn't accumulate
-    for (let i = 0; i < this.cells.length; i++) {
-      for (let j = 0; j < this.cells[i].length; j++) {
-        this.cells[i][j].path = false
-      }
-    }
-    // set path
-    for (let i = 0; i < this.path.length; i++) {
-      this.path[i].path = true
     }
   }
 }

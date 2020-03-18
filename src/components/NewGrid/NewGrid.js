@@ -3,21 +3,25 @@ import { Redirect } from 'react-router-dom'
 import Sketch from 'react-p5'
 // -----------Shared
 import Cell from '../Shared/Cell'
-import ResetBoardButton from '../Shared/ResetBoardButton'
-import RandomWallsButton from '../Shared/RandomWallsButton'
-import ResetWallsButton from '../Shared/ResetWallsButton'
-import AStarButton from '../Shared/AStarButton'
-import BreadthButton from '../Shared/BreadthButton'
+import AllButtons from '../Shared/AllButtons'
+import Legend from '../Shared/Legend'
 // ----------- Shared functions
+// helpers
 import setStartAndEnd from '../../lib/setStartAndEnd'
-import beginAStar from '../../lib/beginAStar'
 import findAllNeighbors from '../../lib/findAllNeighbors'
 import resetBoard from '../../lib/resetBoard'
 import checkForClicks from '../../lib/checkForClicks'
+// used for algorithm setting
+import beginAStar from '../../lib/beginAStar'
 import beginBreadth from '../../lib/beginBreadth'
-
+import beginDepth from '../../lib/beginDepth'
+import beginDjikstra from '../../lib/beginDjikstra'
+import begin from '../../lib/begin'
+// actual algorithm code
+import runDepthFirst from '../../lib/runDepthFirst'
 import runBreadthFirst from '../../lib/runBreadthFirst'
 import runAStar from '../../lib/runAStar'
+import runDjikstra from '../../lib/runDjikstra'
 // -----------Libraries
 import axios from 'axios'
 // -----------API URL
@@ -25,6 +29,7 @@ import apiUrl from '../../apiConfig'
 // -----------Update/Create Form
 import GridForm from '../Shared/GridForm'
 
+// newGrid is a component that shows any time a user clicks 'new grid'
 export default class NewGrid extends Component {
   constructor () {
     super()
@@ -34,9 +39,11 @@ export default class NewGrid extends Component {
         name: ''
       },
       initiated: false,
-      algorithm: null
+      algorithm: null,
+      start: false
     }
   }
+  // shared variables the p5 functions
   p5
   start
   path = []
@@ -49,13 +56,23 @@ export default class NewGrid extends Component {
 
   // shared modules -----------------
   setStartAndEnd = setStartAndEnd.bind(this)
+  begin = begin.bind(this)
+
+  // sets the algorithm states
   beginAStar = beginAStar.bind(this)
   beginBreadth = beginBreadth.bind(this)
+  beginDepth = beginDepth.bind(this)
+  beginDjikstra = beginDjikstra.bind(this)
+
+  // loops through every cell to have them check their neighbors
   findAllNeighbors = findAllNeighbors.bind(this)
   resetBoard = resetBoard.bind(this)
   checkForClicks = checkForClicks.bind(this)
+
+  runDjikstra = runDjikstra.bind(this)
   runAStar = runAStar.bind(this)
   runBreadthFirst = runBreadthFirst.bind(this)
+  runDepthFirst = runDepthFirst.bind(this)
 
   // TODO: Make breakpoints to have this be responsive on mobile:
   // scale down and also make the canvas resize if the window is under a certain width
@@ -73,13 +90,14 @@ export default class NewGrid extends Component {
   saveGrid = event => {
     event.preventDefault()
     const name = this.state.grid.name
-    const map = this.cells.map(row =>
+    const walls = this.cells.map(row =>
       row.map(cell => cell.wall)
     )
+    const weights = this.cells.map(row => row.map(cell => cell.weighted))
     axios({
       url: `${apiUrl}/grids`,
       method: 'POST',
-      data: { grid: { walls: map, name: name } },
+      data: { grid: { walls: walls, name: name, weights: weights } },
       headers: {
         Authorization: `Bearer ${this.props.user.token}`
       }
@@ -119,8 +137,7 @@ export default class NewGrid extends Component {
       }
     }
     this.setStartAndEnd()
-
-    // initialize  start and end position
+    // bugs out without a state change at the end of setup
     this.setState({ initiated: true })
   }
 
@@ -133,10 +150,17 @@ export default class NewGrid extends Component {
         this.cells[i][j].show()
       }
     }
-    this.runAStar(p5)
-    this.runBreadthFirst(p5)
+    // once state is started, begin running the algorithms.
+    // the algorithms themselves check for the 'algorithm' state
+    if (this.state.start) {
+      this.runAStar(p5)
+      this.runBreadthFirst(p5)
+      this.runDepthFirst(p5)
+      this.runDjikstra(p5)
+    }
     this.checkForClicks(p5)
 
+    // draw the current path
     p5.noFill()
     p5.stroke(255, 0, 200)
     p5.strokeWeight(5)
@@ -166,30 +190,25 @@ export default class NewGrid extends Component {
           owned={true}
           deleteGrid={false}
         />
-        <div className="center row">
-          <AStarButton className="col-md-3" onClick={this.beginAStar} />
-          <BreadthButton className="col-md-3" onClick={this.beginBreadth} />
-
-          <RandomWallsButton
-            className="col-md-3"
-            running={this.state.algorithm}
-            cells={this.cells}
-            start={this.start}
-            end={this.end}
-          />
-
-          <ResetBoardButton
-            className="col-md-3"
-            resetBoard={this.resetBoard}
-            cells={this.cells}
-          />
-          <ResetWallsButton
-            className="col-md-3"
-            running={this.state.algorithm}
-            cells={this.cells}
-          />
+        {/* navbar  */}
+        <AllButtons
+          algorithm={this.state.algorithm}
+          beginAStar={this.beginAStar}
+          beginBreadth={this.beginBreadth}
+          beginDepth={this.beginDepth}
+          beginDjikstra={this.beginDjikstra}
+          running={this.state.start}
+          cells={this.cells}
+          start={this.start}
+          end={this.end}
+          resetBoard={this.resetBoard}
+          begin={this.begin}
+          msgAlert={this.props.msgAlert}
+        />
+        <div className = 'row'>
+          <Legend />
+          <Sketch className = 'col-9 react-p5' setup={this.setup} draw={this.draw} />
         </div>
-        <Sketch setup={this.setup} draw={this.draw} />
       </div>
     )
   }
