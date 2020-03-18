@@ -11,6 +11,7 @@ import setStartAndEnd from '../../lib/setStartAndEnd'
 import findAllNeighbors from '../../lib/findAllNeighbors'
 import resetBoard from '../../lib/resetBoard'
 import checkForClicks from '../../lib/checkForClicks'
+import drawPath from '../../lib/drawPath'
 // used for algorithm setting
 import beginAStar from '../../lib/beginAStar'
 import beginBreadth from '../../lib/beginBreadth'
@@ -69,6 +70,7 @@ export default class NewGrid extends Component {
   resetBoard = resetBoard.bind(this)
   checkForClicks = checkForClicks.bind(this)
 
+  drawPath = drawPath.bind(this)
   runDjikstra = runDjikstra.bind(this)
   runAStar = runAStar.bind(this)
   runBreadthFirst = runBreadthFirst.bind(this)
@@ -160,16 +162,7 @@ export default class NewGrid extends Component {
     }
     this.checkForClicks(p5)
 
-    // draw the current path
-    p5.noFill()
-    p5.stroke(255, 0, 200)
-    p5.strokeWeight(5)
-    p5.beginShape()
-    for (let i = 0; i < this.path.length; i++) {
-      const current = this.path[i]
-      p5.vertex(current.x + current.size / 2, current.y + current.size / 2)
-    }
-    p5.endShape()
+    this.drawPath(p5)
   }
   // end draw loop-------------------------------------------------
 

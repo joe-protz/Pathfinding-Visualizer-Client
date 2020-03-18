@@ -8,7 +8,7 @@ const Legend = () => (
     &nbsp;
     <h5>Legend</h5>
     <div>
-      Start/End/Path:
+      Start/End:
       <div style={{ ...legendStyle, background: '#ff00c8' }}>&nbsp;</div>
       Wall:
       <div style={{ ...legendStyle, background: 'black' }}>&nbsp;</div>
