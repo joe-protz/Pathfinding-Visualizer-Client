@@ -16,7 +16,8 @@ const begin = function () {
     this.start.open = true
     this.start.d = 0
 
-    this.setState({ start: true })
+    this.setState({ start: true,
+      editing: false })
   }
 }
 

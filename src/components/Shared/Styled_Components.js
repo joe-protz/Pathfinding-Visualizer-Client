@@ -23,7 +23,7 @@ export const PrimaryButton = styled.button`
       background: transparent;
       color: deeppink;
     `}
-       `
+  `
 
 export const DangerButton = styled.button`
         color: white;
@@ -36,4 +36,27 @@ export const DangerButton = styled.button`
           color: rgb(255, 0, 0, 50);
           background: transparent;
         }
+      `
+
+export const ToggleButton = styled.button`
+        background: transparent;
+        width: max-content;
+        border-radius: 3px;
+        margin: 1em;
+        padding: 0.25em 1em;
+        border: 2px solid deeppink;
+        &:hover {
+          background: deeppink;
+          color: white;
+        }
+        ${props =>
+    !props.editing
+      ? `
+        background: transparent;
+        color: deeppink;
+    `
+      : `
+      background: deeppink;
+      color: white;
+    `}
       `
