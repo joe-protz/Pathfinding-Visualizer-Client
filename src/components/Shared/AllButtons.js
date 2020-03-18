@@ -12,16 +12,17 @@ import BreadthButton from './BreadthButton'
 import DepthButton from './DepthButton'
 import DjikstraButton from './DjikstraButton'
 import BeginButton from './BeginButton'
+import EditButton from './EditButton'
 
 const AllButtons = props => {
-  const { algorithm, running, cells, start, end, resetBoard, beginAStar, beginBreadth, beginDepth, beginDjikstra, begin, msgAlert } = props
+  const { algorithm, running, cells, start, end, resetBoard, beginAStar, beginBreadth, beginDepth, beginDjikstra, begin, msgAlert, toggleEditing, editing } = props
   return (
     <Navbar bg="dark" variant="dark" expand="md">
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
       <Navbar.Collapse id="basic-navbar-nav">
         <Nav className="mr-auto ml-auto">
-          <Nav.Item as={BeginButton} onClick={begin}>
-          </Nav.Item>
+          <Nav.Item as={BeginButton} onClick={begin}></Nav.Item>
+          <Nav.Item as={EditButton} editing={editing} onClick={toggleEditing}></Nav.Item>
         </Nav>
 
         <Nav className="mr-auto ml-auto">
@@ -58,6 +59,7 @@ const AllButtons = props => {
               cells={cells}
               start={start}
               end={end}
+              editing={editing}
               msgAlert={msgAlert}
             ></NavDropdown.Item>
 
@@ -68,6 +70,7 @@ const AllButtons = props => {
               start={start}
               end={end}
               msgAlert={msgAlert}
+              editing={editing}
             ></NavDropdown.Item>
           </NavDropdown>
         </Nav>
