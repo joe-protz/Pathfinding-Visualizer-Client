@@ -41,7 +41,7 @@ const runDjikstra = function (p5) {
       closedSet.push(current)
       current.closed = true
       if (current === end) {
-        this.setState({ algorithm: null })
+        this.setState({ start: false })
       }
       this.path = []
       let temp = current

@@ -4,7 +4,7 @@ const runDepthFirst = function (p5) {
   const { openSet, end, closedSet } = this
   const { algorithm } = this.state
 
-  if (algorithm === 'depthFirst') {
+  if (algorithm === 'Depth First') {
     if (openSet.length > 0) {
       // in depth first, openSet is a stack
       // start by taking the top node off the stack
@@ -20,7 +20,7 @@ const runDepthFirst = function (p5) {
       }
       // we found a solution
       if (current === end) {
-        this.setState({ algorithm: null })
+        this.setState({ start: false })
       }
       // if the node has yet to be marked as discovered, mark it
       if (!closedSet.includes(current)) {
@@ -31,7 +31,11 @@ const runDepthFirst = function (p5) {
       // the open stack
       const neighbors = current.neighbors
       neighbors.forEach(neighbor => {
-        if (!neighbor.wall && !closedSet.includes(neighbor) && !openSet.includes(neighbor)) {
+        if (
+          !neighbor.wall &&
+          !closedSet.includes(neighbor) &&
+          !openSet.includes(neighbor)
+        ) {
           openSet.push(neighbor)
           neighbor.open = true
           neighbor.previous = current
@@ -39,7 +43,7 @@ const runDepthFirst = function (p5) {
       })
     } else {
       // no solution
-      this.setState({ algorithm: null })
+      this.setState({ start: false })
     }
   }
 }

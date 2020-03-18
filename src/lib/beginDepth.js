@@ -7,7 +7,7 @@ const beginDepth = function () {
   this.closedSet = []
   this.openSet.push(this.start)
   this.start.open = true
-  this.setState({ algorithm: 'depthFirst' })
+  this.setState({ algorithm: 'Depth First' })
 }
 
 export default beginDepth

@@ -3,7 +3,7 @@
 const runBreadthFirst = function (p5) {
   const { openSet, closedSet, end } = this
   const { algorithm } = this.state
-  if (algorithm === 'BreadthFirst') {
+  if (algorithm === 'Breadth First') {
     // loop on the queue while it isnt empty
     if (openSet.length > 0) {
       const current = openSet[0]
@@ -20,7 +20,7 @@ const runBreadthFirst = function (p5) {
           if (neighbor === end) {
             neighbor.previous = current
 
-            this.setState({ algorithm: null })
+            this.setState({ start: false })
           } else {
             openSet.push(neighbor)
             neighbor.open = true
@@ -36,7 +36,7 @@ const runBreadthFirst = function (p5) {
         }
       })
     } else {
-      this.setState({ algorithm: null })
+      this.setState({ start: false })
     }
   }
 }

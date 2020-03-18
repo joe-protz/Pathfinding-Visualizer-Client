@@ -2,10 +2,10 @@ import React from 'react'
 import { PrimaryButton } from '../Shared/Styled_Components'
 
 const RandomWeightsButton = props => {
-  const { cells, start, end } = props
+  const { cells, start, end, msgAlert, running } = props
 
   const selectWeights = () => {
-    if (!props.running) {
+    if (!running) {
       cells.forEach(row =>
         row.forEach(cell => {
           if (Math.random() < 0.4 && !cell.wall) {
@@ -17,6 +17,12 @@ const RandomWeightsButton = props => {
       )
       start.wall = false
       end.wall = false
+    } else {
+      msgAlert({
+        heading: 'Oops!',
+        message: 'Only able to generate weighted cells when algorithm is not running',
+        variant: 'danger'
+      })
     }
   }
   return <PrimaryButton onClick={selectWeights}>Random Weights</PrimaryButton>

@@ -7,7 +7,7 @@ const beginBreadth = function () {
   this.closedSet = []
   this.openSet.push(this.start)
   this.start.open = true
-  this.setState({ algorithm: 'BreadthFirst' })
+  this.setState({ algorithm: 'Breadth First' })
 }
 
 export default beginBreadth

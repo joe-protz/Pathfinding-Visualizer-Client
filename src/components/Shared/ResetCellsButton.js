@@ -2,11 +2,18 @@ import React from 'react'
 import { PrimaryButton } from './Styled_Components'
 
 const ResetButton = (props) => {
-  const { cells } = props
+  const { cells, running, msgAlert } = props
 
   const reset = () => {
-    if (!props.running) {
+    if (!running) {
       cells.forEach(row => row.forEach(cell => cell.resetCell()))
+    } else {
+      msgAlert({
+        heading: 'Oops!',
+        message:
+          'Only able to reset cells when algorithm is not running',
+        variant: 'danger'
+      })
     }
   }
   return (

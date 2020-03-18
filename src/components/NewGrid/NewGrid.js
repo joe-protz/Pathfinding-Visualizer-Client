@@ -14,6 +14,7 @@ import checkForClicks from '../../lib/checkForClicks'
 import beginBreadth from '../../lib/beginBreadth'
 import beginDepth from '../../lib/beginDepth'
 import beginDjikstra from '../../lib/beginDjikstra'
+import begin from '../../lib/begin'
 
 import runDepthFirst from '../../lib/runDepthFirst'
 import runBreadthFirst from '../../lib/runBreadthFirst'
@@ -35,7 +36,8 @@ export default class NewGrid extends Component {
         name: ''
       },
       initiated: false,
-      algorithm: null
+      algorithm: null,
+      start: false
     }
   }
   p5
@@ -55,6 +57,8 @@ export default class NewGrid extends Component {
   beginBreadth = beginBreadth.bind(this)
   beginDepth = beginDepth.bind(this)
   beginDjikstra = beginDjikstra.bind(this)
+
+  begin = begin.bind(this)
 
   findAllNeighbors = findAllNeighbors.bind(this)
   resetBoard = resetBoard.bind(this)
@@ -142,11 +146,12 @@ export default class NewGrid extends Component {
         this.cells[i][j].show()
       }
     }
-    this.runAStar(p5)
-    this.runBreadthFirst(p5)
-    this.runDepthFirst(p5)
-    this.runDjikstra(p5)
-
+    if (this.state.start) {
+      this.runAStar(p5)
+      this.runBreadthFirst(p5)
+      this.runDepthFirst(p5)
+      this.runDjikstra(p5)
+    }
     this.checkForClicks(p5)
 
     p5.noFill()
@@ -179,15 +184,18 @@ export default class NewGrid extends Component {
           deleteGrid={false}
         />
         <AllButtons
+          algorithm={this.state.algorithm}
           beginAStar={this.beginAStar}
           beginBreadth={this.beginBreadth}
           beginDepth={this.beginDepth}
           beginDjikstra={this.beginDjikstra}
-          running={this.state.algorithm}
+          running={this.state.start}
           cells={this.cells}
           start={this.start}
           end={this.end}
           resetBoard={this.resetBoard}
+          begin={this.begin}
+          msgAlert={this.props.msgAlert}
         />
         <div className = 'row'>
           <Legend />
