@@ -13,6 +13,8 @@ import beginBreadth from '../../lib/beginBreadth'
 import beginDepth from '../../lib/beginDepth'
 import beginDjikstra from '../../lib/beginDjikstra'
 
+import begin from '../../lib/begin'
+
 import findAllNeighbors from '../../lib/findAllNeighbors'
 import resetBoard from '../../lib/resetBoard'
 import checkForClicks from '../../lib/checkForClicks'
@@ -38,7 +40,8 @@ class SavedGrid extends Component {
       deleted: false,
       initiated: false,
       algorithm: null,
-      saved: false
+      saved: false,
+      start: false
     }
   }
   // variables are initialized outside of the constructor if they're used with sketch
@@ -66,6 +69,7 @@ class SavedGrid extends Component {
   beginBreadth = beginBreadth.bind(this)
   beginDepth = beginDepth.bind(this)
 
+  begin = begin.bind(this)
   beginDjikstra = beginDjikstra.bind(this)
   runDjikstra = runDjikstra.bind(this)
 
@@ -255,13 +259,13 @@ class SavedGrid extends Component {
       this.setState({ initiated: true })
     }
     p5.background(255)
-
+    if (this.state.start) {
+      this.runAStar(p5)
+      this.runBreadthFirst(p5)
+      this.runDepthFirst(p5)
+      this.runDjikstra(p5)
+    }
     this.checkForClicks(p5)
-    this.runAStar(p5)
-    this.runBreadthFirst(p5)
-    this.runDepthFirst(p5)
-    this.runDjikstra(p5)
-
     // continual loop to show all cells based on their state
 
     for (let i = 0; i < this.cells.length; i++) {
@@ -307,15 +311,18 @@ class SavedGrid extends Component {
           />
 
           <AllButtons
+            algorithm={this.state.algorithm}
             beginAStar={this.beginAStar}
             beginBreadth={this.beginBreadth}
             beginDepth={this.beginDepth}
             beginDjikstra={this.beginDjikstra}
-            running={this.state.algorithm}
+            running={this.state.start}
             cells={this.cells}
             start={this.start}
             end={this.end}
             resetBoard={this.resetBoard}
+            begin={this.begin}
+            msgAlert={this.props.msgAlert}
           />
           <div className="row">
             <Legend />

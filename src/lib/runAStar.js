@@ -17,7 +17,7 @@ const runAStar = function (p5) {
       const { current } = this
       // if we found the solution...
       if (current === end) {
-        this.setState({ algorithm: null })
+        this.setState({ start: false })
       } else {
       // Remove from open set and add to closed, setting attr for visuals
         removeFromArray(openSet, current)
@@ -63,7 +63,7 @@ const runAStar = function (p5) {
         })
       }
     } else {
-      this.setState({ algorithm: null })
+      this.setState({ start: false })
 
     // no solution
     }

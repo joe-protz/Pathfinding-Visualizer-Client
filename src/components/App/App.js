@@ -105,7 +105,7 @@ class App extends Component {
               <SavedGrid msgAlert={this.msgAlert} match={match} user={user} />
             )}
           />
-          {/* CREATE Grid */}
+          {/* CREATED Grid */}
           <AuthenticatedRoute
             user={user}
             path="/new_grid"
