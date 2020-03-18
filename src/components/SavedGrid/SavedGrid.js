@@ -115,7 +115,7 @@ class SavedGrid extends Component {
           .then(res => {
             // set cells to the res data
             this.cells = res.data.grid.walls
-            this.walls = res.data.grid.weights
+            this.weights = res.data.grid.weights
             this.updated = false
             // sets this components state using res data
             this.setState(

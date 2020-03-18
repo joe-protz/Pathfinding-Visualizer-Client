@@ -39,8 +39,8 @@ const Home = (props) => {
     if (myGrids.length > 0) { ownedOne = true }
     // create thumbnail grid for owned grids
     ownedHtml = myGrids
-      .slice(0, 9)
       .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+      .slice(0, 9)
       .map((grid, index) => (
         <Link className="col-md-4" key={grid.id} to={`/grids/${grid._id}`}>
           <ThumbnailGrid
@@ -55,8 +55,8 @@ const Home = (props) => {
       // create thumbnail grid for 9 recent community grids
     gridsFeed = grids
       .filter(grid => !grid.editable)
-      .slice(0, 9)
       .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+      .slice(0, 9)
       .map((grid, index) => (
         <Link className="col-md-4" key={grid.id} to={`/grids/${grid._id}`}>
           <ThumbnailGrid
