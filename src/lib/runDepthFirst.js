@@ -1,4 +1,4 @@
-// while the algo is A* and there are still cells in openSet
+// runs the Depth First Algorithm and animates it, must pass in p5 from the grid component to allow drawing capabilities
 
 const runDepthFirst = function (p5) {
   const { openSet, end, closedSet } = this
