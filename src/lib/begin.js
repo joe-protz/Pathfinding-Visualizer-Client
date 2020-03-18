@@ -1,3 +1,4 @@
+// reset the board and start the current algorithm visualization
 const begin = function () {
   if (!this.state.algorithm) {
     this.props.msgAlert({

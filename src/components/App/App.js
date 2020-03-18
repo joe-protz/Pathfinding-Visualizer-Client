@@ -26,13 +26,15 @@ class App extends Component {
       msgAlerts: []
     }
   }
-
+  // set the user on login
   setUser = user => this.setState({ user })
+  // used to let the app know a new user has visited the homepage at least once
   updateUser =() => {
     this.setState({ user: { ...this.state.user, firstTime: false } })
   }
+  // used on logout
   clearUser = () => this.setState({ user: null })
-
+  // pass down to any components as needed
   msgAlert = ({ heading, message, variant }) => {
     this.setState({ msgAlerts: [...this.state.msgAlerts, { heading, message, variant }] })
   }
@@ -42,6 +44,7 @@ class App extends Component {
 
     return (
       <Fragment>
+        {/* Navbar */}
         <Header user={user} />
         {msgAlerts.map((msgAlert, index) => (
           <AutoDismissAlert

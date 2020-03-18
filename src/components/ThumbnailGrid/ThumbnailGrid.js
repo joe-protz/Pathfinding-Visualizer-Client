@@ -8,6 +8,7 @@ import axios from 'axios'
 // -----------API URL
 import apiUrl from '../../apiConfig'
 
+// Used to generate a thumbnail of a users grid, only does one draw loop
 class ThumbnailGrid extends Component {
   constructor () {
     super()

@@ -6,16 +6,18 @@ import Cell from '../Shared/Cell'
 import AllButtons from '../Shared/AllButtons'
 import Legend from '../Shared/Legend'
 // ----------- Shared functions
+// helpers
 import setStartAndEnd from '../../lib/setStartAndEnd'
-import beginAStar from '../../lib/beginAStar'
 import findAllNeighbors from '../../lib/findAllNeighbors'
 import resetBoard from '../../lib/resetBoard'
 import checkForClicks from '../../lib/checkForClicks'
+// used for algorithm setting
+import beginAStar from '../../lib/beginAStar'
 import beginBreadth from '../../lib/beginBreadth'
 import beginDepth from '../../lib/beginDepth'
 import beginDjikstra from '../../lib/beginDjikstra'
 import begin from '../../lib/begin'
-
+// actual algorithm code
 import runDepthFirst from '../../lib/runDepthFirst'
 import runBreadthFirst from '../../lib/runBreadthFirst'
 import runAStar from '../../lib/runAStar'
@@ -27,6 +29,7 @@ import apiUrl from '../../apiConfig'
 // -----------Update/Create Form
 import GridForm from '../Shared/GridForm'
 
+// newGrid is a component that shows any time a user clicks 'new grid'
 export default class NewGrid extends Component {
   constructor () {
     super()
@@ -40,6 +43,7 @@ export default class NewGrid extends Component {
       start: false
     }
   }
+  // shared variables the p5 functions
   p5
   start
   path = []
@@ -52,14 +56,15 @@ export default class NewGrid extends Component {
 
   // shared modules -----------------
   setStartAndEnd = setStartAndEnd.bind(this)
+  begin = begin.bind(this)
 
+  // sets the algorithm states
   beginAStar = beginAStar.bind(this)
   beginBreadth = beginBreadth.bind(this)
   beginDepth = beginDepth.bind(this)
   beginDjikstra = beginDjikstra.bind(this)
 
-  begin = begin.bind(this)
-
+  // loops through every cell to have them check their neighbors
   findAllNeighbors = findAllNeighbors.bind(this)
   resetBoard = resetBoard.bind(this)
   checkForClicks = checkForClicks.bind(this)
@@ -132,8 +137,7 @@ export default class NewGrid extends Component {
       }
     }
     this.setStartAndEnd()
-
-    // initialize  start and end position
+    // bugs out without a state change at the end of setup
     this.setState({ initiated: true })
   }
 
@@ -146,6 +150,8 @@ export default class NewGrid extends Component {
         this.cells[i][j].show()
       }
     }
+    // once state is started, begin running the algorithms.
+    // the algorithms themselves check for the 'algorithm' state
     if (this.state.start) {
       this.runAStar(p5)
       this.runBreadthFirst(p5)
@@ -154,6 +160,7 @@ export default class NewGrid extends Component {
     }
     this.checkForClicks(p5)
 
+    // draw the current path
     p5.noFill()
     p5.stroke(255, 0, 200)
     p5.strokeWeight(5)
@@ -183,6 +190,7 @@ export default class NewGrid extends Component {
           owned={true}
           deleteGrid={false}
         />
+        {/* navbar  */}
         <AllButtons
           algorithm={this.state.algorithm}
           beginAStar={this.beginAStar}

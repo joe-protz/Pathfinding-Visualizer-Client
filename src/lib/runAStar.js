@@ -2,9 +2,12 @@
 import heuristic from './heuristic'
 import removeFromArray from './removeFromArray'
 
+// runs the A* Algorithm and animates it, must pass in p5 from the grid component to allow drawing capabilities
+
 const runAStar = function (p5) {
   const { openSet, closedSet, end } = this
   const { algorithm } = this.state
+
   if (algorithm === 'A*') {
     if (openSet.length > 0) {
       let winner = 0

@@ -6,23 +6,23 @@ import Cell from '../Shared/Cell'
 import AllButtons from '../Shared/AllButtons'
 import Legend from '../Shared/Legend'
 
-// -----------Shared functions
+// ----------- Shared functions
+// helpers
 import setStartAndEnd from '../../lib/setStartAndEnd'
+import findAllNeighbors from '../../lib/findAllNeighbors'
+import resetBoard from '../../lib/resetBoard'
+import checkForClicks from '../../lib/checkForClicks'
+// used for algorithm setting
 import beginAStar from '../../lib/beginAStar'
 import beginBreadth from '../../lib/beginBreadth'
 import beginDepth from '../../lib/beginDepth'
 import beginDjikstra from '../../lib/beginDjikstra'
-
 import begin from '../../lib/begin'
-
-import findAllNeighbors from '../../lib/findAllNeighbors'
-import resetBoard from '../../lib/resetBoard'
-import checkForClicks from '../../lib/checkForClicks'
-
-import runDjikstra from '../../lib/runDjikstra'
+// actual algorithm code
+import runDepthFirst from '../../lib/runDepthFirst'
 import runBreadthFirst from '../../lib/runBreadthFirst'
 import runAStar from '../../lib/runAStar'
-import runDepthFirst from '../../lib/runDepthFirst'
+import runDjikstra from '../../lib/runDjikstra'
 
 // -----------Libraries
 import axios from 'axios'

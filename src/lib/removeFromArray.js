@@ -1,3 +1,4 @@
+// permanently removes an item from an arr
 const removeFromArray = (arr, elt) => {
   // loops through backwards so that the removal does not cause a
   // skipped item

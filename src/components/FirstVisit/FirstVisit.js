@@ -3,7 +3,10 @@ import { Link } from 'react-router-dom'
 import axios from 'axios'
 import apiUrl from '../../apiConfig'
 import { PrimaryButton } from '../Shared/Styled_Components'
+
+// component is only ever shown to a brand new user
 class FirstVisit extends Component {
+  // tell API to update user
   componentDidMount () {
     axios({
       url: `${apiUrl}/userVisit`,
@@ -11,11 +14,10 @@ class FirstVisit extends Component {
       headers: {
         Authorization: `Bearer ${this.props.user.token}`
       }
-    })
-      .catch(() => console.error(this.props.user))
+    }).catch(() => console.error(this.props.user))
   }
+  // axios call to set the users firstVisit to false
   componentWillUnmount () {
-    // axios call to set the users firstVisit to false
     this.props.updateUser()
   }
   render () {

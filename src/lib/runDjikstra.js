@@ -1,10 +1,10 @@
-// while the algo is A* and there are still cells in openSet
 import heuristic from './heuristic'
 import removeFromArray from './removeFromArray'
 
 const runDjikstra = function (p5) {
   const { openSet, closedSet, end } = this
   const { algorithm } = this.state
+
   if (algorithm === 'Djikstra') {
     if (openSet.length > 0) {
       let winner = 0
