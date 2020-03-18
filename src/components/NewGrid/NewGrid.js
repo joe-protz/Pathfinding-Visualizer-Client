@@ -12,6 +12,7 @@ import findAllNeighbors from '../../lib/findAllNeighbors'
 import resetBoard from '../../lib/resetBoard'
 import checkForClicks from '../../lib/checkForClicks'
 import drawPath from '../../lib/drawPath'
+import toggleEditing from '../../lib/toggleEditing'
 // used for algorithm setting
 import beginAStar from '../../lib/beginAStar'
 import beginBreadth from '../../lib/beginBreadth'
@@ -41,7 +42,8 @@ export default class NewGrid extends Component {
       },
       initiated: false,
       algorithm: null,
-      start: false
+      start: false,
+      editing: true
     }
   }
   // shared variables the p5 functions
@@ -69,6 +71,7 @@ export default class NewGrid extends Component {
   findAllNeighbors = findAllNeighbors.bind(this)
   resetBoard = resetBoard.bind(this)
   checkForClicks = checkForClicks.bind(this)
+  toggleEditing = toggleEditing.bind(this)
 
   drawPath = drawPath.bind(this)
   runDjikstra = runDjikstra.bind(this)
@@ -144,6 +147,7 @@ export default class NewGrid extends Component {
   }
 
   draw = p5 => {
+    const { editing, start } = this.state
     p5.background(255)
     // continual loop to show all cells based on their state
 
@@ -154,14 +158,15 @@ export default class NewGrid extends Component {
     }
     // once state is started, begin running the algorithms.
     // the algorithms themselves check for the 'algorithm' state
-    if (this.state.start) {
+    if (start) {
       this.runAStar(p5)
       this.runBreadthFirst(p5)
       this.runDepthFirst(p5)
       this.runDjikstra(p5)
     }
-    this.checkForClicks(p5)
-
+    if (editing) {
+      this.checkForClicks(p5)
+    }
     this.drawPath(p5)
   }
   // end draw loop-------------------------------------------------
@@ -197,6 +202,8 @@ export default class NewGrid extends Component {
           resetBoard={this.resetBoard}
           begin={this.begin}
           msgAlert={this.props.msgAlert}
+          editing={this.state.editing}
+          toggleEditing={this.toggleEditing}
         />
         <div className = 'row'>
           <Legend />

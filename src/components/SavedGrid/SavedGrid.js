@@ -13,6 +13,7 @@ import findAllNeighbors from '../../lib/findAllNeighbors'
 import resetBoard from '../../lib/resetBoard'
 import checkForClicks from '../../lib/checkForClicks'
 import drawPath from '../../lib/drawPath'
+import toggleEditing from '../../lib/toggleEditing'
 // used for algorithm setting
 import beginAStar from '../../lib/beginAStar'
 import beginBreadth from '../../lib/beginBreadth'
@@ -73,6 +74,7 @@ class SavedGrid extends Component {
   begin = begin.bind(this)
   beginDjikstra = beginDjikstra.bind(this)
   runDjikstra = runDjikstra.bind(this)
+  toggleEditing = toggleEditing.bind(this)
 
   runDepthFirst = runDepthFirst.bind(this)
 
@@ -125,7 +127,8 @@ class SavedGrid extends Component {
                 owned: res.data.grid.editable,
                 grid: { name: res.data.grid.name },
                 gridId: res.data.grid._id,
-                saved: false
+                saved: false,
+                editing: false
               },
               () => this.p5.loop()
             )
@@ -241,6 +244,7 @@ class SavedGrid extends Component {
   }
 
   draw = p5 => {
+    const { editing, start } = this.state
     // this needs to be done here because component did mount happens
     // after setup, so in order to use the response data I created a
     // boolean check since draw is a continual loop
@@ -260,13 +264,15 @@ class SavedGrid extends Component {
       this.setState({ initiated: true })
     }
     p5.background(255)
-    if (this.state.start) {
+    if (start) {
       this.runAStar(p5)
       this.runBreadthFirst(p5)
       this.runDepthFirst(p5)
       this.runDjikstra(p5)
     }
-    this.checkForClicks(p5)
+    if (editing) {
+      this.checkForClicks(p5)
+    }
     // continual loop to show all cells based on their state
 
     for (let i = 0; i < this.cells.length; i++) {
@@ -316,6 +322,8 @@ class SavedGrid extends Component {
             resetBoard={this.resetBoard}
             begin={this.begin}
             msgAlert={this.props.msgAlert}
+            editing={this.state.editing}
+            toggleEditing={this.toggleEditing}
           />
           <div className="row">
             <Legend />
