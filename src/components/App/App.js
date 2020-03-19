@@ -96,6 +96,7 @@ class App extends Component {
                 msgAlert={this.msgAlert}
                 user={user}
                 updateUser={this.updateUser}
+                setUser={this.setUser}
               />
             )}
           />

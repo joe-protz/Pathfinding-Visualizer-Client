@@ -11,7 +11,7 @@ import { PrimaryButton } from '../Shared/Styled_Components'
 
 const Home = (props) => {
   const [grids, setGrids] = useState([null])
-  const { user, updateUser } = props
+  const { user, updateUser, msgAlert, setUser } = props
   // Only do the axios req if user is signed in-------------
   useEffect(() => {
     if (user) {
@@ -25,7 +25,7 @@ const Home = (props) => {
         .then(res => setGrids(res.data.grids))
         .catch(console.error)
     }
-  }, [])
+  }, [user])
 
   // If the user is signed in, map over the grids, otherwise just display a welcome component
   let ownedOne = false
@@ -119,7 +119,7 @@ const Home = (props) => {
       'Loading...'
     )
     // if no user(logged out), show welcome component
-  } else return (<Welcome/>)
+  } else return <Welcome msgAlert={msgAlert} setUser={setUser} />
 }
 
 export default withRouter(Home)
