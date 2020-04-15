@@ -9,6 +9,8 @@ import Welcome from '../Welcome/Welcome'
 import FirstVisit from '../FirstVisit/FirstVisit'
 import { PrimaryButton } from '../Shared/Styled_Components'
 
+import './Home.scss'
+
 const Home = (props) => {
   const [grids, setGrids] = useState([null])
   const { user, updateUser, msgAlert, setUser } = props
@@ -77,33 +79,52 @@ const Home = (props) => {
     // otherwise, if there are any grids
   } else if (grids[0]) {
     return (
-      <div className="allGrids">
-        {/* as long as the user owns one grid */}
-        {user && ownedOne && (
-          <Link to={'/new_grid'}>
-            <PrimaryButton>New Grid</PrimaryButton>
-          </Link>
-        )}
-        {ownedOne && (
-          <span>
-            <Link to={'/my_grids'}>
-              <PrimaryButton>My Grids</PrimaryButton>
+      <div className="allGrids home-box">
+        <div className="inner-home text-center">
+          {/* as long as the user owns one grid */}
+          {user && ownedOne && (
+            <Link to={'/new_grid'}>
+              <PrimaryButton>New Grid</PrimaryButton>
             </Link>
-            <h2>Here are your most recent grids</h2>
-          </span>
-        )}
-        {/* special button for user's with no grids */}
-        {!ownedOne && (
-          <Link to={'/new_grid'}>
-            <PrimaryButton className={'btn btn-primary'}>
-              You do not own any grids, click here to begin!
-            </PrimaryButton>
-          </Link>
+          )}
+          {ownedOne && (
+            <span>
+              <Link to={'/my_grids'}>
+                <PrimaryButton>My Grids</PrimaryButton>
+              </Link>
+            </span>
+          )}
+
+          {/* special button for user's with no grids */}
+          {!ownedOne && (
+            <Link to={'/new_grid'}>
+              <PrimaryButton className={'btn btn-primary'}>
+                You do not own any grids, click here to begin!
+              </PrimaryButton>
+            </Link>
+          )}
+        </div>
+
+        {ownedOne && (
+          <div className="inner-home">
+            <div className="row">
+              <h2>Here are your most recent grids</h2>
+            </div>
+            <div className="row"> {ownedHtml}</div>
+          </div>
         )}
         {/* show  owned grids and community grids */}
-        <div className="row">{ownedHtml}</div>
-        {user && <h2>Here are some recently made community grids!</h2>}
-        <div className="row">{gridsFeed}</div>
+
+        {user && (
+          <div className="inner-home">
+            <div className="row">
+              <h2 className="m2">
+                Here are some recently made community grids!
+              </h2>
+            </div>
+            <div className="row">{gridsFeed}</div>
+          </div>
+        )}
       </div>
     )
     // if user logs in and there are 0 grids, everybody must have deleted theirs and a special message is needed
