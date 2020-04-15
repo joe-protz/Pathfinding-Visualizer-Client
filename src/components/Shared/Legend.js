@@ -4,16 +4,26 @@ const legendStyle = {
   margin: '8px'
 }
 const Legend = () => (
-  <div className="col-2">
-    &nbsp;
-    <h5>Legend</h5>
-    <div>
-      Start/End:
-      <div style={{ ...legendStyle, background: '#ff00c8' }}>&nbsp;</div>
-      Wall:
-      <div style={{ ...legendStyle, background: 'black' }}>&nbsp;</div>
-      Open Set:
+  <div>
+    <div className="row">
+      &nbsp;
+      <h5>Legend</h5>
+    </div>
+    <div className="row">
+      <div className="mt-2">Start/End:</div>
       <div
+        className="col-1 sq"
+        style={{ ...legendStyle, background: '#ff00c8' }}
+      >
+        &nbsp;
+      </div>
+      <div className="mt-2">Wall:</div>
+      <div className="col-1 sq" style={{ ...legendStyle, background: 'black' }}>
+        &nbsp;
+      </div>
+      <div className="mt-2">Open Set:</div>
+      <div
+        className="col-1 sq"
         style={{
           ...legendStyle,
           background: '#00ff00',
@@ -22,8 +32,9 @@ const Legend = () => (
       >
         &nbsp;
       </div>
-      Closed Set:
+      <div className="mt-2">Closed Set:</div>
       <div
+        className="col-1 sq"
         style={{
           ...legendStyle,
           background: '#FF0000',
@@ -32,8 +43,9 @@ const Legend = () => (
       >
         &nbsp;
       </div>
-      Weighted Cell:
+      <div className="mt-2"> Weighted Cell:</div>
       <div
+        className="col-1 sq"
         style={{
           ...legendStyle,
           background: '#0000FF'
@@ -41,8 +53,9 @@ const Legend = () => (
       >
         &nbsp;
       </div>
-      Weighted & Open:
+      <div className="mt-2">Weighted & Open:</div>
       <div
+        className="col-1 sq"
         style={{
           ...legendStyle,
           background: '#00FF00'
@@ -50,8 +63,9 @@ const Legend = () => (
       >
         &nbsp;
       </div>
-      Weighted & Closed:
+      <div className="mt-2"> Weighted & Closed:</div>
       <div
+        className="col-1 sq"
         style={{
           ...legendStyle,
           background: '#FF0000'

@@ -26,6 +26,8 @@ import runBreadthFirst from '../../lib/runBreadthFirst'
 import runAStar from '../../lib/runAStar'
 import runDjikstra from '../../lib/runDjikstra'
 
+import '../NewGrid/Grids.scss'
+
 // -----------Libraries
 import axios from 'axios'
 // -----------API URL
@@ -299,39 +301,49 @@ class SavedGrid extends Component {
     if (found) {
       return (
         <div>
-          <GridForm
-            grid={grid}
-            handleChange={this.handleChange}
-            handleSubmit={this.updateGrid}
-            owned={owned}
-            deleteGrid={this.deleteGrid}
-            saveAsNew={this.saveAsNew}
-            deleteBool={deleteBool}
-          />
-
-          <AllButtons
-            algorithm={this.state.algorithm}
-            beginAStar={this.beginAStar}
-            beginBreadth={this.beginBreadth}
-            beginDepth={this.beginDepth}
-            beginDjikstra={this.beginDjikstra}
-            running={this.state.start}
-            cells={this.cells}
-            start={this.start}
-            end={this.end}
-            resetBoard={this.resetBoard}
-            begin={this.begin}
-            msgAlert={this.props.msgAlert}
-            editing={this.state.editing}
-            toggleEditing={this.toggleEditing}
-          />
-          <div className="row">
-            <Legend />
-            <Sketch
-              className="col-9 react-p5"
-              setup={this.setup}
-              draw={this.draw}
+          <div className="inner-grid text-center">
+            <div>
+              Drag mouse to create walls. Hold shift to create weighted cells.
+            </div>
+            <GridForm
+              grid={grid}
+              handleChange={this.handleChange}
+              handleSubmit={this.updateGrid}
+              owned={owned}
+              deleteGrid={this.deleteGrid}
+              saveAsNew={this.saveAsNew}
+              deleteBool={deleteBool}
             />
+          </div>
+          <div className="inner-grid text-center">
+            <AllButtons
+              algorithm={this.state.algorithm}
+              beginAStar={this.beginAStar}
+              beginBreadth={this.beginBreadth}
+              beginDepth={this.beginDepth}
+              beginDjikstra={this.beginDjikstra}
+              running={this.state.start}
+              cells={this.cells}
+              start={this.start}
+              end={this.end}
+              resetBoard={this.resetBoard}
+              begin={this.begin}
+              msgAlert={this.props.msgAlert}
+              editing={this.state.editing}
+              toggleEditing={this.toggleEditing}
+            />
+            <div className="row">
+              <div className="col-12 m-3">
+                <Legend />
+              </div>
+              <div className="col">
+                <Sketch
+                  className=" react-p5"
+                  setup={this.setup}
+                  draw={this.draw}
+                />
+              </div>
+            </div>
           </div>
         </div>
       )

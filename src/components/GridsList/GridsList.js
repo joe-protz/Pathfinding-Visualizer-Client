@@ -6,6 +6,8 @@ import axios from 'axios'
 import apiUrl from '../../apiConfig'
 import ThumbnailGrid from '../ThumbnailGrid/ThumbnailGrid'
 
+import './GridsList.scss'
+
 const GridsList = (props) => {
   const [grids, setGrids] = useState([])
   const { user } = props
@@ -37,7 +39,7 @@ const GridsList = (props) => {
     ))
   if (grids.length) {
     return (
-      <div className='row'>
+      <div className='row grids-list'>
         {ownedHtml}
       </div>
     )

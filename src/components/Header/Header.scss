@@ -1,0 +1,11 @@
+a.nav-link {
+  &:hover {
+    color: deeppink !important;
+  }
+  &.active{
+    color: deeppink !important;
+  }
+}
+a.navbar-brand {
+  color:deeppink !important;
+}
