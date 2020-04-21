@@ -31,17 +31,14 @@ import apiUrl from '../../apiConfig'
 // -----------Update/Create Form
 import GridForm from '../Shared/GridForm'
 
-import './Grids.scss'
+import '../NewGrid/Grids.scss'
 
 // newGrid is a component that shows any time a user clicks 'new grid'
-export default class NewGrid extends Component {
+export default class Grid extends Component {
   constructor () {
     super()
     this.state = {
       saved: false,
-      grid: {
-        name: ''
-      },
       initiated: false,
       algorithm: null,
       start: false,
@@ -84,7 +81,7 @@ export default class NewGrid extends Component {
   // TODO: Make breakpoints to have this be responsive on mobile:
   // scale down and also make the canvas resize if the window is under a certain width
   // Initialize end ------------------------------------------------
-  handleChange = (event) => {
+  handleChange = event => {
     const { name, value } = event.target
     const { grid } = this.state
     const updatedField = {
@@ -97,9 +94,7 @@ export default class NewGrid extends Component {
   saveGrid = event => {
     event.preventDefault()
     const name = this.state.grid.name
-    const walls = this.cells.map(row =>
-      row.map(cell => cell.wall)
-    )
+    const walls = this.cells.map(row => row.map(cell => cell.wall))
     const weights = this.cells.map(row => row.map(cell => cell.weighted))
     axios({
       url: `${apiUrl}/grids`,
@@ -132,7 +127,9 @@ export default class NewGrid extends Component {
     const myP5 = p5
     // canvas is 500x500px
 
-    p5.createCanvas(mobileView ? 250 : 500, mobileView ? 250 : 500).parent(canvasParentRef) // use parent to render canvas in this ref (without that p5 render this canvas outside your component)
+    p5.createCanvas(mobileView ? 250 : 500, mobileView ? 250 : 500).parent(
+      canvasParentRef
+    ) // use parent to render canvas in this ref (without that p5 render this canvas outside your component)
     cols = this.cols = Math.ceil(p5.width / scale)
     rows = this.rows = Math.ceil(p5.height / scale)
 
@@ -180,13 +177,15 @@ export default class NewGrid extends Component {
     const { gridId, saved, grid } = this.state
     //  redirect if grid has been saved to db
     if (saved) {
-      return (<Redirect to={{ pathname: '/grids/' + gridId }}/>)
+      return <Redirect to={{ pathname: '/grids/' + gridId }} />
     }
     // the sketch component making the canvas is rendered here
     return (
       <div>
         <div className="inner-grid text-center">
-          <div>Drag mouse to create walls. Hold shift to create weighted cells.</div>
+          <div>
+            Drag mouse to create walls. Hold shift to create weighted cells.
+          </div>
           <GridForm
             grid={grid}
             handleChange={this.handleChange}
