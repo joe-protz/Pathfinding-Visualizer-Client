@@ -33,6 +33,7 @@ import GridForm from '../Shared/GridForm'
 
 import './Grids.scss'
 
+const MOBILE_BREAKPOINT = 768
 // newGrid is a component that shows any time a user clicks 'new grid'
 export default class NewGrid extends Component {
   constructor () {
@@ -57,7 +58,7 @@ export default class NewGrid extends Component {
   cols
   rows
   current
-  scale =10
+  scale = 10
 
   // shared modules -----------------
   setStartAndEnd = setStartAndEnd.bind(this)
@@ -81,10 +82,8 @@ export default class NewGrid extends Component {
   runBreadthFirst = runBreadthFirst.bind(this)
   runDepthFirst = runDepthFirst.bind(this)
 
-  // TODO: Make breakpoints to have this be responsive on mobile:
-  // scale down and also make the canvas resize if the window is under a certain width
   // Initialize end ------------------------------------------------
-  handleChange = (event) => {
+  handleChange = event => {
     const { name, value } = event.target
     const { grid } = this.state
     const updatedField = {
@@ -97,9 +96,7 @@ export default class NewGrid extends Component {
   saveGrid = event => {
     event.preventDefault()
     const name = this.state.grid.name
-    const walls = this.cells.map(row =>
-      row.map(cell => cell.wall)
-    )
+    const walls = this.cells.map(row => row.map(cell => cell.wall))
     const weights = this.cells.map(row => row.map(cell => cell.weighted))
     axios({
       url: `${apiUrl}/grids`,
@@ -123,13 +120,20 @@ export default class NewGrid extends Component {
 
   // set up the canvas
   setup = (p5, canvasParentRef) => {
-    let { cols, rows } = this
-    const { scale } = this
+    const mobileView = window.innerWidth < MOBILE_BREAKPOINT
+    let { cols, rows, scale } = this
+    scale = this.scale = mobileView ? 5 : scale
+
     // create canvas
     this.p5 = p5
     const myP5 = p5
     // canvas is 500x500px
-    p5.createCanvas(500, 500).parent(canvasParentRef) // use parent to render canvas in this ref (without that p5 render this canvas outside your component)
+    if (mobileView) {
+      p5.createCanvas(250, 250).parent(canvasParentRef)
+    } else {
+      p5.createCanvas(500, 500).parent(canvasParentRef)
+    }
+    // use parent to render canvas in this ref (without that p5 render this canvas outside your component)
     cols = this.cols = Math.ceil(p5.width / scale)
     rows = this.rows = Math.ceil(p5.height / scale)
 
@@ -146,6 +150,19 @@ export default class NewGrid extends Component {
     this.setStartAndEnd()
     // bugs out without a state change at the end of setup
     this.setState({ initiated: true })
+  }
+  windowResized = p5 => {
+    const mobileView = window.innerWidth < MOBILE_BREAKPOINT
+    if (mobileView) {
+      p5.resizeCanvas(250, 250)
+      this.cells.forEach(row => row.forEach(cell => cell.setSize(5)))
+    } else {
+      p5.resizeCanvas(500, 500)
+      this.cells.forEach(row => row.forEach(cell => cell.setSize(10)))
+    }
+    this.resetBoard()
+    this.cells.forEach(row => row.forEach(cell => cell.reset()))
+    this.setStartAndEnd()
   }
 
   draw = p5 => {
@@ -177,13 +194,15 @@ export default class NewGrid extends Component {
     const { gridId, saved, grid } = this.state
     //  redirect if grid has been saved to db
     if (saved) {
-      return (<Redirect to={{ pathname: '/grids/' + gridId }}/>)
+      return <Redirect to={{ pathname: '/grids/' + gridId }} />
     }
     // the sketch component making the canvas is rendered here
     return (
       <div>
         <div className="inner-grid text-center">
-          <div>Drag mouse to create walls. Hold shift to create weighted cells.</div>
+          <div>
+            Drag mouse to create walls. Hold shift to create weighted cells.
+          </div>
           <GridForm
             grid={grid}
             handleChange={this.handleChange}
@@ -217,6 +236,7 @@ export default class NewGrid extends Component {
             </div>
             <div className="col">
               <Sketch
+                windowResized={this.windowResized}
                 className="react-p5"
                 setup={this.setup}
                 draw={this.draw}

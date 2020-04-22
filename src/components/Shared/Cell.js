@@ -81,6 +81,12 @@ export default class Cell {
     this.wall = false
     this.weighted = false
   }
+
+  setSize = (size) => {
+    this.size = size
+    this.x = this.i * size
+    this.y = this.j * size
+  }
   findNeighbors = (cells, cols, rows) => {
     const { i, j } = this
 

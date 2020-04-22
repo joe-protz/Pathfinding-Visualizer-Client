@@ -17,7 +17,7 @@ import EditButton from './EditButton'
 const AllButtons = props => {
   const { algorithm, running, cells, start, end, resetBoard, beginAStar, beginBreadth, beginDepth, beginDjikstra, begin, msgAlert, toggleEditing, editing } = props
   return (
-    <Navbar bg="dark" variant="dark" expand="md">
+    <Navbar bg="dark" variant="dark" expand="lg">
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
       <Navbar.Collapse id="basic-navbar-nav">
         <Nav className="mr-auto ml-auto">

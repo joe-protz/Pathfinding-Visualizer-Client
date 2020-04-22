@@ -35,6 +35,8 @@ import apiUrl from '../../apiConfig'
 // -----------GridForm
 import GridForm from '../Shared/GridForm'
 
+const MOBILE_BREAKPOINT = 768
+
 class SavedGrid extends Component {
   constructor () {
     super()
@@ -80,8 +82,6 @@ class SavedGrid extends Component {
 
   runDepthFirst = runDepthFirst.bind(this)
 
-  // TODO: Make breakpoints to have this be responsive on mobile:
-  // scale down and also make the canvas resize if the window is under a certain width
   // get the grid
   componentDidMount () {
     axios({
@@ -233,16 +233,38 @@ class SavedGrid extends Component {
 
   // set up the canvas
   setup = (p5, canvasParentRef) => {
-    const { scale } = this
+    const mobileView = window.innerWidth < MOBILE_BREAKPOINT
+    let { scale } = this
+    scale = this.scale = mobileView ? 5 : scale
+
     this.p5 = p5
     // create canvas
-    // canvas is 500x500px
-    p5.createCanvas(500, 500).parent(canvasParentRef) // use parent to render canvas in this ref (without that p5 render this canvas outside your component)
+    if (mobileView) {
+      p5.createCanvas(250, 250).parent(canvasParentRef)
+    } else {
+      p5.createCanvas(500, 500).parent(canvasParentRef)
+    }
     this.cols = Math.ceil(p5.width / scale)
     this.rows = Math.ceil(p5.height / scale)
 
     // initialize  start and end position
     this.setState({ initiated: true })
+  }
+
+  windowResized = p5 => {
+    const mobileView = window.innerWidth < MOBILE_BREAKPOINT
+    if (mobileView) {
+      p5.resizeCanvas(250, 250)
+      this.scale = 5
+      this.cells.forEach(row => row.forEach(cell => cell.setSize(this.scale)))
+    } else {
+      p5.resizeCanvas(500, 500)
+      this.scale = 10
+      this.cells.forEach(row => row.forEach(cell => cell.setSize(this.scale)))
+    }
+    this.resetBoard()
+    this.cells.forEach(row => row.forEach(cell => cell.reset()))
+    this.setStartAndEnd()
   }
 
   draw = p5 => {
@@ -259,7 +281,14 @@ class SavedGrid extends Component {
           if (this.weights) {
             weighted = this.weights[i][j]
           }
-          this.cells[i][j] = new Cell(i, j, this.scale, myP5, this.cells[i][j], weighted)
+          this.cells[i][j] = new Cell(
+            i,
+            j,
+            this.scale,
+            myP5,
+            this.cells[i][j],
+            weighted
+          )
         }
       }
       this.setStartAndEnd()
@@ -338,6 +367,7 @@ class SavedGrid extends Component {
               </div>
               <div className="col">
                 <Sketch
+                  windowResized={this.windowResized}
                   className=" react-p5"
                   setup={this.setup}
                   draw={this.draw}
